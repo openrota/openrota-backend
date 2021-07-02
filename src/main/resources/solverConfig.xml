@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<solver>
+  <scoreDirectorFactory>
+    <!--<scoreDrl>org/optaweb/employeerostering/service/solver/employeeRosteringScoreRules.drl</scoreDrl>-->
+    <constraintProviderClass>com.shareNwork.solver.RoasterConstraintsProvider</constraintProviderClass>
+  </scoreDirectorFactory>
+</solver>
