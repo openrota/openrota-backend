@@ -25,7 +25,7 @@ public class Project extends BaseEntity {
 
     @ManyToOne
     @PlanningVariable(valueRangeProviderRefs = "employeeRange", nullable = true)
-    private Employee employee = null;
+    private SharedResource employee = null;
 
     @NotNull
     @ManyToMany(fetch = FetchType.EAGER)
@@ -35,7 +35,7 @@ public class Project extends BaseEntity {
     private Set<Skill> requiredSkillSet;
 
     public boolean hasRequiredSkills() {
-        return employee.getSkillSet().containsAll(requiredSkillSet);
+        return employee.getSkillProficiencies().containsAll(requiredSkillSet);
     }
 
     public long getLengthInMinutes() {

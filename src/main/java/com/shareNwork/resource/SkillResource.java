@@ -1,33 +1,34 @@
 package com.shareNwork.resource;
 
 import com.shareNwork.domain.Project;
+import com.shareNwork.domain.Skill;
 import com.shareNwork.repository.ProjectRepository;
+import com.shareNwork.repository.SkillRepository;
 import lombok.AllArgsConstructor;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.GraphQLApi;
 import org.eclipse.microprofile.graphql.Mutation;
 import org.eclipse.microprofile.graphql.Query;
 
-import javax.inject.Inject;
 import java.text.ParseException;
 import java.util.List;
 
 @AllArgsConstructor
 @GraphQLApi
-public class ProjectResource {
+public class SkillResource {
+    private SkillRepository skillRepository;
 
-    private ProjectRepository projectRepository;
-
-    @Query("project")
-    @Description("Get all projects")
-    public List<Project> findAll() {
-        return this.projectRepository.findAll().list();
+    @Query("skill")
+    @Description("Get all skills")
+    public List<Skill> findAll() {
+        return this.skillRepository.findAll().list();
     }
 
     @Mutation
-    @Description("Create a new Employee")
-    public Project createProject(Project project) throws ParseException {
-        return this.projectRepository.createProject(project);
+    @Description("Add a new skill")
+    public Skill createSkill(Skill skill) throws ParseException {
+        return this.skillRepository.createSkill(skill);
     }
 
 }
+

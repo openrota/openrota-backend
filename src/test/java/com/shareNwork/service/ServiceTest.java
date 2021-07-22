@@ -29,13 +29,13 @@ public class ServiceTest {
 
         Employee employee = new Employee();
         employee.setId(10l);
-        employee.setEmail("xyz@gmail.com");
-        employee.setName("xyz");
+        employee.setEmailId("xyz@gmail.com");
+        employee.setFirstName("xyz");
 
         Employee employee2 = new Employee();
         employee2.setId(10l);
-        employee2.setEmail("abc@gmail.com");
-        employee2.setName("abc");
+        employee2.setEmailId("abc@gmail.com");
+        employee2.setFirstName("abc");
 
         PanacheQuery<Employee> mock = Mockito.mock(PanacheQuery.class);
         when(mock.list()).thenReturn(Arrays.asList(employee, employee2));
@@ -52,16 +52,16 @@ public class ServiceTest {
                 .contentType("application/json")
                 .body("{ \"query\": \"{" +
                         "  employee {" +
-                        "    name" +
-                        "    email" +
+                        "    firstName" +
+                        "    emailId" +
                         "  }" +
                         "}\"" +
                         "}")
                 .post("/graphql")
                 .then().log().ifValidationFails()
                 .statusCode(200)
-                .body("data.employee.name", Matchers.hasItems("xyz", "abc"))
-                .body("data.employee.email", Matchers.hasItems("xyz@gmail.com", "abc@gmail.com"));
+                .body("data.employee.firstName", Matchers.hasItems("xyz", "abc"))
+                .body("data.employee.emailId", Matchers.hasItems("xyz@gmail.com", "abc@gmail.com"));
     }
 
 //    @Test

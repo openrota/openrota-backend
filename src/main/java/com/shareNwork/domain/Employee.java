@@ -1,24 +1,29 @@
 package com.shareNwork.domain;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.Set;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 @Entity
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Employee extends BaseEntity {
 
-    @NotNull
-    private String name;
+    //    @NotNull
+    private String firstName;
 
-    private String email;
+    private String lastName;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "EmployeeSkillProficiencySet",
-            joinColumns = @JoinColumn(name = "employeeId", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "skillId", referencedColumnName = "id"))
-    private Set<Skill> skillSet;
+    private String employeeId;
+
+    private String emailId;
+
+    private String designation;
 }

@@ -2,6 +2,7 @@ package com.shareNwork.resource;
 
 import com.shareNwork.domain.Employee;
 import com.shareNwork.repository.EmployeeRepository;
+import io.vertx.ext.web.multipart.MultipartForm;
 import lombok.AllArgsConstructor;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.GraphQLApi;

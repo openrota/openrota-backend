@@ -18,6 +18,11 @@ You can run the app with a local postgres database by
 - running `docker run --name some-postgres -p 5432:5432 -e DATABASE_PASSWORD=mysecretpassword -d postgres`
 - `mvn quarkus:dev`
 
+## Testing H2
+
+The project uses H2 as default database
+- visit http://localhost:8080/h2/ after running in dev mode
+- when prompted, provide url - jdbc:h2:mem:employeerostering
 ## GraphQl queries
 
 ```graphql
