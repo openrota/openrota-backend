@@ -1,6 +1,7 @@
 package com.shareNwork.domain;
 
 
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,7 +17,7 @@ import javax.persistence.InheritanceType;
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
 @EqualsAndHashCode(callSuper = false)
-public class Employee extends BaseEntity {
+public class Employee extends PanacheEntity {
 
     //    @NotNull
     private String firstName;

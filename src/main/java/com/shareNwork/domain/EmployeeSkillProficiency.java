@@ -1,25 +1,30 @@
 package com.shareNwork.domain;
 
 import com.shareNwork.domain.constants.SkillProficiencyLevel;
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Data
-public class EmployeeSkillProficiency {
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
+public class EmployeeSkillProficiency  extends PanacheEntity {
 
-    @EmbeddedId
-    EmployeeSkillProficiencyKey id;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "employee_id")
+    @ManyToOne
     private SharedResource employee;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "skill_id")
+    @ManyToOne
     private Skill skill;
 
     private SkillProficiencyLevel proficiencyLevel;
 
+    public EmployeeSkillProficiency(SkillProficiencyLevel proficiencyLevel) {
+        this.proficiencyLevel = proficiencyLevel;
+    }
 }

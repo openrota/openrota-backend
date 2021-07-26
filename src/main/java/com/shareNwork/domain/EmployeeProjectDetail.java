@@ -1,5 +1,6 @@
 package com.shareNwork.domain;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -10,7 +11,7 @@ import javax.persistence.ManyToOne;
 @Entity
 @Data
 @EqualsAndHashCode
-public class EmployeeProjectDetail extends BaseEntity {
+public class EmployeeProjectDetail extends PanacheEntity {
 
     private String projectName;
 

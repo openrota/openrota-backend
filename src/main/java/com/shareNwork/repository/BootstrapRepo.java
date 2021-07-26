@@ -1,7 +1,9 @@
 package com.shareNwork.repository;
 
+import com.shareNwork.domain.EmployeeSkillProficiency;
 import com.shareNwork.domain.SharedResource;
 import com.shareNwork.domain.Skill;
+import com.shareNwork.domain.constants.SkillProficiencyLevel;
 import io.quarkus.runtime.StartupEvent;
 import lombok.NoArgsConstructor;
 
@@ -38,8 +40,19 @@ public class BootstrapRepo {
 
         SharedResource employee1 = new SharedResource("Rishi", "raj", "RISH323", "ranand@redhat.com", "engineer", "12");
         SharedResource employee2 = new SharedResource("Abhishek", "kumar", "ABHI323", "ankumr@redhat.com", "engineer", "23");
+
         this.sharedResourceRepository.persist(employee1);
         this.sharedResourceRepository.persist(employee2);
+
+        EmployeeSkillProficiency employeeSkillProficiency = new EmployeeSkillProficiency(SkillProficiencyLevel.ADVANCED);
+        employeeSkillProficiency.setSkill(skill1);
+        employeeSkillProficiency.setEmployee(employee1);
+        employeeSkillProficiency.persist();
+
+        EmployeeSkillProficiency employeeSkillProficiency2 = new EmployeeSkillProficiency(SkillProficiencyLevel.BEGINNER);
+        employeeSkillProficiency2.setSkill(skill2);
+        employeeSkillProficiency2.setEmployee(employee2);
+        employeeSkillProficiency2.persist();
     }
 
 }

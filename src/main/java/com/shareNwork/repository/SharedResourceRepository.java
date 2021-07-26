@@ -1,6 +1,7 @@
 package com.shareNwork.repository;
 
 import com.shareNwork.domain.Employee;
+import com.shareNwork.domain.EmployeeSkillProficiency;
 import com.shareNwork.domain.SharedResource;
 import com.shareNwork.domain.filters.EmployeeFilter;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
@@ -13,6 +14,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
+import javax.ws.rs.NotFoundException;
 import java.text.ParseException;
 import java.util.List;
 
@@ -24,7 +26,7 @@ public class SharedResourceRepository implements PanacheRepository<SharedResourc
 
     @Transactional
     public SharedResource updateOrCreate(SharedResource shareResource) throws ParseException {
-        if (shareResource.getId() == null) {
+        if (shareResource.id == null) {
             persist(shareResource);
             return shareResource;
         } else {
@@ -33,11 +35,51 @@ public class SharedResourceRepository implements PanacheRepository<SharedResourc
     }
 
     @Transactional
+    public SharedResource addSkillsToEmployee(Long id, List<EmployeeSkillProficiency> employeeSkillProficiencies) throws ParseException {
+        SharedResource employee = findById(id);
+        if (employee == null) {
+            throw new NotFoundException();
+        } else {
+            for (EmployeeSkillProficiency employeeSkillProficiency: employeeSkillProficiencies) {
+                employeeSkillProficiency.setEmployee(employee);
+                employeeSkillProficiency.persist();
+            }
+        }
+       return employee;
+    }
+
+    @Transactional
     public List<SharedResource> getAllSRs() {
-//        return (List<SharedResource>)em.createQuery("SELECT p FROM SharedResource p", SharedResource.class)
-//                .getResultList();
         return listAll();
     }
+
+    @Transactional
+    public EmployeeSkillProficiency updateSkillsOfEmployee(Long id, EmployeeSkillProficiency employeeSkillProficiency) throws ParseException {
+        EmployeeSkillProficiency employeeSkillProficiency1 = EmployeeSkillProficiency.findById(employeeSkillProficiency.id);
+        if (employeeSkillProficiency1 == null) {
+            throw new NotFoundException();
+        }
+        if (employeeSkillProficiency.getSkill() != null) {
+            employeeSkillProficiency1.setSkill(employeeSkillProficiency.getSkill());
+        }
+        if (employeeSkillProficiency.getProficiencyLevel() != null) {
+            employeeSkillProficiency1.setProficiencyLevel(employeeSkillProficiency.getProficiencyLevel());
+        }
+        employeeSkillProficiency1.persist();
+        return employeeSkillProficiency1;
+    }
+
+
+    @Transactional
+    public EmployeeSkillProficiency deleteSkillsOfEmployee(Long id, EmployeeSkillProficiency employeeSkillProficiency) throws ParseException {
+            EmployeeSkillProficiency employeeSkillProficiency1 = EmployeeSkillProficiency.findById(employeeSkillProficiency.id);
+            if (employeeSkillProficiency1 == null) {
+                throw new NotFoundException();
+            }
+           employeeSkillProficiency1.delete();
+          return employeeSkillProficiency1;
+    }
+
 
     @Transactional
     public SharedResource deleteSharedResource(Long id) throws ParseException {

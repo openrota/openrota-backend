@@ -1,34 +1,25 @@
 package com.shareNwork.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 public class SharedResource extends Employee {
 
     @Getter
     @Setter
-    @OneToMany(mappedBy = "employee")
-    Set<EmployeeSkillProficiency> skillProficiencies;
+    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER)
+    List<EmployeeSkillProficiency> skillProficiencies;
 
     @Getter
     @Setter
     private String totalExperience;
-
-    @Getter
-    @Setter
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "EmployeeSkillProficiencySet",
-            joinColumns = @JoinColumn(name = "employeeId", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "skillId", referencedColumnName = "id"))
-    private Set<Skill> skillProficiencySet;
 
     @Getter
     @Setter

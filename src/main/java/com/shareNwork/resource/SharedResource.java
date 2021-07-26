@@ -1,6 +1,7 @@
 package com.shareNwork.resource;
 
 import com.shareNwork.domain.Employee;
+import com.shareNwork.domain.EmployeeSkillProficiency;
 import com.shareNwork.domain.filters.EmployeeFilter;
 import com.shareNwork.repository.SharedResourceRepository;
 import lombok.AllArgsConstructor;
@@ -37,6 +38,24 @@ public class SharedResource {
     @Description("Create a new SR")
     public com.shareNwork.domain.SharedResource createOrUpdateSharedResource(com.shareNwork.domain.SharedResource resource) throws ParseException {
         return this.sharedResourceRepository.updateOrCreate(resource);
+    }
+
+    @Mutation
+    @Description("Add skills to SR")
+    public com.shareNwork.domain.SharedResource addSkillsToSR(Long id, List<EmployeeSkillProficiency> employeeSkillProficiencies) throws ParseException {
+        return this.sharedResourceRepository.addSkillsToEmployee(id, employeeSkillProficiencies);
+    }
+
+    @Mutation
+    @Description("Update skill of SR")
+    public EmployeeSkillProficiency updateSkillOfSR(Long id, EmployeeSkillProficiency employeeSkillProficiency) throws ParseException {
+        return this.sharedResourceRepository.updateSkillsOfEmployee(id, employeeSkillProficiency);
+    }
+
+    @Mutation
+    @Description("Delete skills of SR")
+    public EmployeeSkillProficiency deleteSkillForSR(Long id, EmployeeSkillProficiency employeeSkillProficiency) throws ParseException {
+        return this.sharedResourceRepository.deleteSkillsOfEmployee(id, employeeSkillProficiency);
     }
 
     @Mutation

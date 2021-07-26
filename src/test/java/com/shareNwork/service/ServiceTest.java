@@ -28,12 +28,12 @@ public class ServiceTest {
     public void setup() throws ParseException {
 
         Employee employee = new Employee();
-        employee.setId(10l);
+        employee.id = 10l;
         employee.setEmailId("xyz@gmail.com");
         employee.setFirstName("xyz");
 
         Employee employee2 = new Employee();
-        employee2.setId(10l);
+        employee2.id = 10l;
         employee2.setEmailId("abc@gmail.com");
         employee2.setFirstName("abc");
 

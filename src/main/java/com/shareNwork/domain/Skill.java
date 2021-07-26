@@ -20,7 +20,6 @@ public class Skill extends BaseEntity {
     @OneToMany(mappedBy = "skill")
     Set<EmployeeSkillProficiency> skillProficiencies;
 
-    @NotNull
     private String name;
 
     public Skill(String name) {
