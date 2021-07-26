@@ -3,6 +3,7 @@ package com.shareNwork.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
@@ -14,6 +15,7 @@ import javax.persistence.InheritanceType;
 @AllArgsConstructor
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
+@EqualsAndHashCode(callSuper = false)
 public class Employee extends BaseEntity {
 
     //    @NotNull

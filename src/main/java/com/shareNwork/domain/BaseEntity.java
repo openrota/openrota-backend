@@ -3,10 +3,7 @@ package com.shareNwork.domain;
 import lombok.Data;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 
 @Data
 @MappedSuperclass

@@ -13,12 +13,10 @@ public class EmployeeSkillProficiency {
     EmployeeSkillProficiencyKey id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @MapsId("employeeId")
     @JoinColumn(name = "employee_id")
     private SharedResource employee;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @MapsId("skillId")
     @JoinColumn(name = "skill_id")
     private Skill skill;
 

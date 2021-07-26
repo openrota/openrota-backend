@@ -41,7 +41,7 @@ public class ServiceTest {
         when(mock.list()).thenReturn(Arrays.asList(employee, employee2));
 
         when(employeeRepository.findAll()).thenReturn(mock);
-        when(employeeRepository.createEmployee(employee)).thenReturn(employee);
+        when(employeeRepository.create(employee)).thenReturn(employee);
     }
 
     @Test

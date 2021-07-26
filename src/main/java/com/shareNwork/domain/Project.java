@@ -6,7 +6,6 @@ import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
@@ -18,10 +17,14 @@ public class Project extends BaseEntity {
     private String projectName;
 
     @NotNull
-    private LocalDate startDate;
+    private String businessUnit;
 
-    @NotNull
-    private LocalDate endDate;
+    @ManyToOne
+    private Slot slot;
+
+    @ManyToOne
+    private Employee projectManager;
+
 
     @ManyToOne
     @PlanningVariable(valueRangeProviderRefs = "employeeRange", nullable = true)
@@ -36,9 +39,5 @@ public class Project extends BaseEntity {
 
     public boolean hasRequiredSkills() {
         return employee.getSkillProficiencies().containsAll(requiredSkillSet);
-    }
-
-    public long getLengthInMinutes() {
-        return startDate.getMonthValue();
     }
 }

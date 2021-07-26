@@ -1,6 +1,5 @@
 package com.shareNwork.repository;
 
-import com.shareNwork.domain.Project;
 import com.shareNwork.domain.Skill;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 

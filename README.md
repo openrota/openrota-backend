@@ -27,23 +27,32 @@ The project uses H2 as default database
 
 ```graphql
 # Visit http://localhost:8080/graphql/schema.graphql to view graphql schema
-
 query getEmployees {
-  employee {
-     name
-     email
+  sharedResource {
+     totalExperience
+    skillProficiencySet{
+      name
+      id
+    }
   }
 }
 
-# Sample Mutations available for users : adminUser : 
+# Sample Mutations
 mutation addEmployee {
-  createEmployee(employee: {
-      name: "Anand",
-    email: "Anand@dakd.com"
-  	}
+  createSharedResource(resource: {
+      firstName: "dadada",
+      emailId: "anand@easa.com"
+      totalExperience: "12",
+      skillProficiencySet: {
+        id: 1,
+        name: "react"
+      }
+    
+    }
   )
   {
-    name
+    id,
+    emailId
   }
 }
 ```

@@ -1,8 +1,6 @@
 package com.shareNwork.resource;
 
-import com.shareNwork.domain.Project;
 import com.shareNwork.domain.Skill;
-import com.shareNwork.repository.ProjectRepository;
 import com.shareNwork.repository.SkillRepository;
 import lombok.AllArgsConstructor;
 import org.eclipse.microprofile.graphql.Description;
