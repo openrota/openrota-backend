@@ -1,43 +1,39 @@
 package com.shareNwork.domain;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.optaplanner.core.api.domain.entity.PlanningEntity;
-import org.optaplanner.core.api.domain.variable.PlanningVariable;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.Set;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import java.util.List;
 
 @Entity
 @Data
-@PlanningEntity
-public class Project extends BaseEntity {
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = false)
+public class Project extends PanacheEntity {
 
-    @NotNull
-    private String projectName;
+   private String projectName;
 
-    @NotNull
-    private String businessUnit;
+   private String totalExperience;
 
-    @ManyToOne
-    private Slot slot;
+   @OneToOne
+   @JoinColumn(name = "slot_id", referencedColumnName = "id")
+   private Slot slot;
 
-    @ManyToOne
-    private Employee projectManager;
+   @OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
+   List<ProjectSkillProficiency> projectSkillProficiencies;
+
+   @OneToOne
+   @JoinColumn(name = "manager_id", referencedColumnName = "id")
+   Manager manager;
 
 
-    @ManyToOne
-    @PlanningVariable(valueRangeProviderRefs = "employeeRange", nullable = true)
-    private SharedResource employee = null;
-
-    @NotNull
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "ShiftRequiredSkillSet",
-            joinColumns = @JoinColumn(name = "projectId", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "skillId", referencedColumnName = "id"))
-    private Set<Skill> requiredSkillSet;
-
-    public boolean hasRequiredSkills() {
-        return employee.getSkillProficiencies().containsAll(requiredSkillSet);
-    }
 }
