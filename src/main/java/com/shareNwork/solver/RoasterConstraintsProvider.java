@@ -10,7 +10,7 @@ import org.optaplanner.core.api.score.stream.uni.UniConstraintStream;
 public final class RoasterConstraintsProvider implements ConstraintProvider {
     private static UniConstraintStream<Project> getAssignedProjectConstraintStream(ConstraintFactory constraintFactory) {
         return constraintFactory.fromUnfiltered(Project.class) // To match DRL
-                .filter(shift -> shift.getEmployee() != null);
+                .filter(shift -> shift.getManager() != null);
     }
 
     @Override
@@ -22,7 +22,6 @@ public final class RoasterConstraintsProvider implements ConstraintProvider {
 
     Constraint requiredSkillsForProject(ConstraintFactory constraintFactory) {
         return getAssignedProjectConstraintStream(constraintFactory)
-                .filter(project -> !project.hasRequiredSkills())
                 .penalize(RoasterConstraintConfiguration.CONSTRAINT_REQUIRED_SKILL_FOR_A_PROJECT, HardMediumSoftLongScore.ONE_HARD);
 //                .penalizeConfigurableLong(RoasterConstraintConfiguration.CONSTRAINT_REQUIRED_SKILL_FOR_A_PROJECT, Project::getLengthInMinutes);
     }

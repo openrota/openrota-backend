@@ -20,10 +20,20 @@ public class ProjectRepository implements PanacheRepository<Project> {
    @Inject
    EntityManager em;
 
+//   @Transactional
+//   public Project createProject(Project project) throws ParseException {
+//      em.persist(project);
+//      return project;
+//   }
+
    @Transactional
-   public Project createProject(Project project) throws ParseException {
-      em.persist(project);
-      return project;
+   public Project updateOrCreateProject(Project project) throws ParseException {
+      if (project.id == null) {
+         persist(project);
+         return project;
+      } else {
+         return em.merge(project);
+      }
    }
 
    @Transactional
@@ -41,7 +51,7 @@ public class ProjectRepository implements PanacheRepository<Project> {
       if (project == null) {
          throw new NotFoundException();
       } else {
-         for (ProjectSkillProficiency projectSkillProficiency: projectSkillProficiencies) {
+         for (ProjectSkillProficiency projectSkillProficiency : projectSkillProficiencies) {
             projectSkillProficiency.setProject(project);
             projectSkillProficiency.persist();
          }

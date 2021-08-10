@@ -27,8 +27,8 @@ public class ProjectResource {
 
    @Mutation
    @Description("Create a new Project")
-   public Project createProject(Project project) throws ParseException {
-      return this.projectRepository.createProject(project);
+   public Project updateOrCreateProject(Project project) throws ParseException {
+      return this.projectRepository.updateOrCreateProject(project);
    }
 
    @Mutation

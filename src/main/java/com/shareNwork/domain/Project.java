@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.optaplanner.core.api.domain.entity.PlanningEntity;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,6 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
+@PlanningEntity
 public class Project extends PanacheEntity {
 
    private String projectName;
@@ -28,7 +30,7 @@ public class Project extends PanacheEntity {
    @JoinColumn(name = "slot_id", referencedColumnName = "id")
    private Slot slot;
 
-   @OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
+   @OneToMany(mappedBy = "project")
    List<ProjectSkillProficiency> projectSkillProficiencies;
 
    @OneToOne
