@@ -1,8 +1,16 @@
 name: Verify Build Workflow
 on:
   push:
+    paths-ignore:
+      - '.dockerignore'
+      - '.gitignore'
+      - 'README*'
     branches: [main]
   pull_request:
+    paths-ignore:
+      - '.dockerignore'
+      - '.gitignore'
+      - 'README*'
     branches: [main]
 
 jobs:
