@@ -1,3 +1,5 @@
+[![Verify Build Workflow](https://github.com/shareNwork/shareNwork-backend/actions/workflows/verify.yaml/badge.svg?branch=main)](https://github.com/shareNwork/shareNwork-backend/actions/workflows/verify.yaml)
+
 # Quarkus Crud with Postgres & GraphQL
 
 This project is aimed to quickly test the stack :
