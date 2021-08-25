@@ -1,6 +1,7 @@
 package com.shareNwork.resource;
 
 import com.shareNwork.domain.Invitation;
+import com.shareNwork.domain.InvitationResponse;
 import com.shareNwork.repository.InvitationRepository;
 import lombok.AllArgsConstructor;
 import org.eclipse.microprofile.graphql.Description;
@@ -18,13 +19,13 @@ public class InvitationResource {
 
    @Mutation
    @Description("Create a new token")
-   public String createInvitationToken(Invitation invitation) throws ParseException {
+   public InvitationResponse createInvitationToken(Invitation invitation) {
       return this.invitationRepository.createInvitationToken(invitation);
    }
 
-   @Query("token")
-   @Description("Get Token")
-   public String getInvitationToken(Invitation invitation) {
-      return this.invitationRepository.createInvitationToken(invitation);
+   @Query("verify")
+   @Description("Verify Email")
+   public boolean verifyEmail(String emailId, String token) {
+      return this.invitationRepository.verifyToken(emailId, token);
    }
 }

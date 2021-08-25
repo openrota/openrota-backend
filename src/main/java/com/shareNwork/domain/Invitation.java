@@ -1,5 +1,6 @@
 package com.shareNwork.domain;
 
+import com.shareNwork.domain.constants.InvitationStatus;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,5 +18,5 @@ public class Invitation extends PanacheEntity {
 
    private String emailId;
 
-   private String status;
+   private InvitationStatus status;
 }

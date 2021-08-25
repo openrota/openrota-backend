@@ -115,6 +115,11 @@
             <version>0.11.2</version>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.7.0</version>
+        </dependency>
         <!-- Uncomment this next dependency if you are using JDK 10 or earlier and you also want to use
              RSASSA-PSS (PS256, PS384, PS512) algorithms.  JDK 11 or later does not require it for those algorithms:
         <dependency>
