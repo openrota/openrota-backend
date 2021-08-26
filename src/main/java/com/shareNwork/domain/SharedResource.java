@@ -14,7 +14,7 @@ public class SharedResource extends Employee {
 
     @Getter
     @Setter
-    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "employee")
     List<EmployeeSkillProficiency> skillProficiencies;
 
     @Getter

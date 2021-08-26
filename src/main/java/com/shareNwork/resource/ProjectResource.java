@@ -1,6 +1,8 @@
 package com.shareNwork.resource;
 
+import com.shareNwork.domain.EmployeeSkillProficiency;
 import com.shareNwork.domain.Project;
+import com.shareNwork.domain.ProjectSkillProficiency;
 import com.shareNwork.repository.ProjectRepository;
 import lombok.AllArgsConstructor;
 import org.eclipse.microprofile.graphql.Description;
@@ -15,18 +17,30 @@ import java.util.List;
 @GraphQLApi
 public class ProjectResource {
 
-    private ProjectRepository projectRepository;
+   private ProjectRepository projectRepository;
 
-    @Query("project")
-    @Description("Get all projects")
-    public List<Project> findAll() {
-        return this.projectRepository.findAll().list();
-    }
+   @Query("project")
+   @Description("Get all projects")
+   public List<Project> findAll() {
+      return this.projectRepository.findAll().list();
+   }
 
-    @Mutation
-    @Description("Create a new Employee")
-    public Project createProject(Project project) throws ParseException {
-        return this.projectRepository.createProject(project);
-    }
+   @Mutation
+   @Description("Create a new Project")
+   public Project updateOrCreateProject(Project project) throws ParseException {
+      return this.projectRepository.updateOrCreateProject(project);
+   }
+
+   @Mutation
+   @Description("Delete a Project")
+   public Project deleteProject(Long id) throws ParseException {
+      return this.projectRepository.deleteProject(id);
+   }
+
+   @Mutation
+   @Description("Add skills to Project")
+   public Project addSkillsToProject(Long id, List<ProjectSkillProficiency> projectSkillProficiencies) throws ParseException {
+      return this.projectRepository.addSkillsToProject(id, projectSkillProficiencies);
+   }
 
 }
