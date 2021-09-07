@@ -10,7 +10,6 @@ import javax.inject.Inject;
 @QuarkusTestResource(H2DatabaseTestResource.class)
 class RepositoryTest {
 
-
     @Inject
     private EmployeeRepository clientRepository;
 

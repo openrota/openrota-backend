@@ -7,9 +7,11 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import java.util.Objects;
 
 @Entity
 @Data
@@ -29,4 +31,6 @@ public class Employee extends PanacheEntity {
     private String emailId;
 
     private String designation;
+
 }
+

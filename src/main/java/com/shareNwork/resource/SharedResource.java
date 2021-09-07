@@ -7,6 +7,7 @@ import com.shareNwork.repository.SharedResourceRepository;
 import lombok.AllArgsConstructor;
 import org.eclipse.microprofile.graphql.*;
 
+import javax.transaction.Transactional;
 import java.text.ParseException;
 import java.util.List;
 
@@ -18,8 +19,9 @@ public class SharedResource {
 
     @Query("sharedResource")
     @Description("Get all resources")
+    @Transactional
     public List<com.shareNwork.domain.SharedResource> getAllSharedResource() {
-        return this.sharedResourceRepository.getAllSRs();
+        return this.sharedResourceRepository.listAll();
     }
 
     @Query("sharedResourceById")

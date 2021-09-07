@@ -17,6 +17,7 @@ public class EmployeeResource {
     @Query("employee")
     @Description("Get all Employees")
     public List<Employee> findAll() {
+
         return this.employeeRepository.findAll().list();
     }
 
