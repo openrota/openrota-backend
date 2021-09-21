@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 
 @Entity
@@ -16,7 +17,8 @@ import javax.persistence.Entity;
 @EqualsAndHashCode(callSuper = false)
 public class Invitation extends PanacheEntity {
 
-   private String emailId;
+    @Column(unique = true)
+    private String emailId;
 
    private InvitationStatus status;
 }

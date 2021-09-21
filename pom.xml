@@ -69,6 +69,10 @@
             <artifactId>quarkus-resteasy</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-mailer</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.optaplanner</groupId>
             <artifactId>optaplanner-quarkus</artifactId>
         </dependency>
