@@ -4,14 +4,12 @@ import com.shareNwork.domain.Invitation;
 import com.shareNwork.domain.InvitationResponse;
 import com.shareNwork.domain.constants.InvitationStatus;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.impl.crypto.DefaultJwtSignatureValidator;
-import io.quarkus.hibernate.orm.panache.PanacheRepository;
-import org.apache.commons.lang3.time.DateUtils;
 import io.jsonwebtoken.impl.TextCodec;
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import io.quarkus.mailer.Mail;
+import io.quarkus.mailer.reactive.ReactiveMailer;
+import org.apache.commons.lang3.time.DateUtils;
 
-
-import javax.crypto.spec.SecretKeySpec;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -26,69 +24,80 @@ import static io.jsonwebtoken.SignatureAlgorithm.HS256;
 
 public class InvitationRepository implements PanacheRepository<Invitation> {
 
-   @Inject
-   EntityManager em;
+    @Inject
+    EntityManager em;
 
-   @Transactional
-   public InvitationResponse createInvitationToken(Invitation invitation) {
+    @Inject
+    ReactiveMailer reactiveMailer;
 
-      InvitationResponse invitationResponse = new InvitationResponse();
-      List<Invitation> invitations = listAll();
+    public static String decodeToken(String token) {
+        Base64.Decoder decoder = Base64.getDecoder();
 
-      for (Invitation invitation1 : invitations) {
-         if (invitation1.getEmailId().equals(invitation.getEmailId()) && invitation1.getStatus().equals(InvitationStatus.PENDING)) {
-            invitationResponse.setResponseStatus(Response.Status.CONFLICT.getStatusCode());
-            invitationResponse.setToken(null);
-            return invitationResponse;
-         }
-      }
+        String[] chunks = token.split("\\.");
 
-      String token = Jwts.builder()
-              .claim("email", invitation.getEmailId())
-              .setIssuedAt(new java.util.Date())
-              .setExpiration(DateUtils.addHours(new java.util.Date(), 3))
-              .signWith(
-                      HS256,
-                      TextCodec.BASE64.decode("Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5E=")
-              )
-              .compact();
+        String header = new String(decoder.decode(chunks[0]));
+        String payload = new String(decoder.decode(chunks[1]));
 
-      invitation.setStatus(InvitationStatus.PENDING);
-      persist(invitation);
-      invitationResponse.setToken(token);
-      invitationResponse.setResponseStatus(Response.Status.OK.getStatusCode());
+        return payload;
+    }
 
-      return invitationResponse;
-   }
+    @Transactional
+    public InvitationResponse createInvitationToken(Invitation invitation) {
 
-   @Transactional
-   public boolean verifyToken(String emailId, String token) {
+        InvitationResponse invitationResponse = new InvitationResponse();
+        List<Invitation> invitations = listAll();
 
-      List<Invitation> invitations = listAll();
+        for (Invitation invitation1 : invitations) {
+            if (invitation1.getEmailId().equals(invitation.getEmailId())) {
+                invitationResponse.setResponseStatus(Response.Status.CONFLICT.getStatusCode());
+                invitationResponse.setToken(null);
+                return invitationResponse;
+            }
+        }
 
-      for (Invitation invitation1 : invitations) {
+        String token = Jwts.builder()
+                .claim("email", invitation.getEmailId())
+                .setIssuedAt(new java.util.Date())
+                .setExpiration(DateUtils.addHours(new java.util.Date(), 3))
+                .signWith(
+                        HS256,
+                        TextCodec.BASE64.decode("Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5E=")
+                )
+                .compact();
 
-         if (invitation1.getEmailId().equals(emailId) && invitation1.getStatus().equals(InvitationStatus.PENDING)) {
+        invitation.setStatus(InvitationStatus.PENDING);
+        persist(invitation);
+        invitationResponse.setToken(token);
+        invitationResponse.setResponseStatus(Response.Status.OK.getStatusCode());
+        String inviteURL = "https://prod.foo.redhat.com:1337/?token=" + token + "&email=" + invitation.getEmailId();
+        reactiveMailer.send(Mail.withText(invitation.getEmailId(), "[Action Required] Invitation from OpenRota",
+                "You are invited to join OpenRota. Click on the link to join:\n" + inviteURL))
+                .subscribe().with(t -> System.out.println("Mail sent to " + invitation.getEmailId()));
+        return invitationResponse;
+    }
 
-            String dataFromToken = decodeToken(token);
-            String extractedEmailFromToken = dataFromToken.substring(dataFromToken.indexOf(":") + 2, dataFromToken.indexOf(",") - 1);
-            invitation1.setStatus(InvitationStatus.COMPLETED);
-            em.merge(invitation1);
-            return extractedEmailFromToken.equals(emailId);
-         }
-      }
-      return false;
-   }
+    @Transactional
+    public boolean verifyToken(String emailId, String token) {
 
-   public static String decodeToken(String token) {
-      Base64.Decoder decoder = Base64.getDecoder();
+        List<Invitation> invitations = listAll();
 
-      String[] chunks = token.split("\\.");
+        for (Invitation invitation1 : invitations) {
 
-      String header = new String(decoder.decode(chunks[0]));
-      String payload = new String(decoder.decode(chunks[1]));
+            if (invitation1.getEmailId().equals(emailId)) {
+                if (invitation1.getStatus().equals(InvitationStatus.PENDING)) {
 
-      return payload;
-   }
+                    String dataFromToken = decodeToken(token);
+                    String extractedEmailFromToken = dataFromToken.substring(dataFromToken.indexOf(":") + 2, dataFromToken.indexOf(",") - 1);
+                    invitation1.setStatus(InvitationStatus.COMPLETED);
+                    em.merge(invitation1);
+                    return extractedEmailFromToken.equals(emailId);
+                }
+                else if (invitation1.getStatus().equals(InvitationStatus.COMPLETED)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
 }
