@@ -28,8 +28,10 @@ public class SharedResourceRepository implements PanacheRepository<SharedResourc
     public SharedResource updateOrCreate(SharedResource shareResource) throws ParseException {
         if (shareResource.id == null) {
             persist(shareResource);
+            addSkillsToEmployee(shareResource.id, shareResource.getSkillProficiencies());
             return shareResource;
         } else {
+            addSkillsToEmployee(shareResource.id, shareResource.getSkillProficiencies());
             return em.merge(shareResource);
         }
     }
@@ -41,16 +43,15 @@ public class SharedResourceRepository implements PanacheRepository<SharedResourc
             throw new NotFoundException();
         } else {
             for (EmployeeSkillProficiency employeeSkillProficiency: employeeSkillProficiencies) {
-                employeeSkillProficiency.setEmployee(employee);
-                employeeSkillProficiency.persist();
+                if (employeeSkillProficiency.id != null ) {
+                    updateSkillsOfEmployee(employeeSkillProficiency.id, employeeSkillProficiency);
+                } else {
+                    employeeSkillProficiency.setEmployee(employee);
+                    employeeSkillProficiency.persist();
+                }
             }
         }
        return employee;
-    }
-
-    @Transactional
-    public List<SharedResource> getAllSRs() {
-        return listAll();
     }
 
     @Transactional

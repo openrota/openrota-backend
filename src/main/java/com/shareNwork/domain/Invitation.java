@@ -1,6 +1,6 @@
 package com.shareNwork.domain;
 
-
+import com.shareNwork.domain.constants.InvitationStatus;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,28 +9,16 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import java.util.Objects;
 
 @Entity
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-@Inheritance(strategy = InheritanceType.JOINED)
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class Employee extends PanacheEntity {
+public class Invitation extends PanacheEntity {
 
-    //    @NotNull
-    private String firstName;
-
-    private String lastName;
-
-    private String employeeId;
-
+    @Column(unique = true)
     private String emailId;
 
-    private String designation;
-
+   private InvitationStatus status;
 }
-
