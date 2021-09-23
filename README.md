@@ -20,6 +20,13 @@ You can run the app with a local postgres database by
 - running `docker run --name some-postgres -p 5432:5432 -e DATABASE_PASSWORD=mysecretpassword -d postgres`
 - `mvn quarkus:dev`
 
+---
+**NOTE**
+
+In order to run the mailer, add `-Dquarkus.mailer.from=${email} -Dquarkus.mailer.username=${username} -Dquarkus.mailer.password=${password}` 
+after `mvn quarkus:dev`. You can find instructions to configure the app password here: https://quarkus.io/guides/mailer-reference#gmail-specific-configuration
+
+---
 ## Testing H2
 
 The project uses H2 as default database
