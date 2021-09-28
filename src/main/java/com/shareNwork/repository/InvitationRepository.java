@@ -1,13 +1,15 @@
 package com.shareNwork.repository;
 
+import com.shareNwork.constants.Constants;
 import com.shareNwork.domain.Invitation;
 import com.shareNwork.domain.InvitationResponse;
 import com.shareNwork.domain.constants.InvitationStatus;
+import com.shareNwork.service.EventBusService;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.impl.TextCodec;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.mailer.Mail;
-import io.quarkus.mailer.reactive.ReactiveMailer;
 import org.apache.commons.lang3.time.DateUtils;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -28,7 +30,7 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
     EntityManager em;
 
     @Inject
-    ReactiveMailer reactiveMailer;
+    EventBusService<Mail> busService;
 
     public static String decodeToken(String token) {
         Base64.Decoder decoder = Base64.getDecoder();
@@ -70,9 +72,10 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
         invitationResponse.setToken(token);
         invitationResponse.setResponseStatus(Response.Status.OK.getStatusCode());
         String inviteURL = "https://prod.foo.redhat.com:1337/?token=" + token + "&email=" + invitation.getEmailId();
-        reactiveMailer.send(Mail.withText(invitation.getEmailId(), "[Action Required] Invitation from OpenRota",
-                "You are invited to join OpenRota. Click on the link to join:\n" + inviteURL))
-                .subscribe().with(t -> System.out.println("Mail sent to " + invitation.getEmailId()));
+        busService.sendRequest(Constants.SEND_MAIL_EVENT,
+                               Mail.withText(invitation.getEmailId(),
+                                             "[Action Required] Invitation from OpenRota",
+                                             "You are invited to join OpenRota. Click on the link to join:\n" + inviteURL));
         return invitationResponse;
     }
 
