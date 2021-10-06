@@ -7,7 +7,10 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.impl.TextCodec;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.mailer.Mail;
-import io.quarkus.mailer.reactive.ReactiveMailer;
+import io.quarkus.mailer.MailTemplate;
+import io.quarkus.qute.Location;
+import io.quarkus.qute.Template;
+
 import org.apache.commons.lang3.time.DateUtils;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -28,7 +31,8 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
     EntityManager em;
 
     @Inject
-    ReactiveMailer reactiveMailer;
+    @Location("sharedResourceInvitation")
+    MailTemplate sharedResourceInvitation;
 
     public static String decodeToken(String token) {
         Base64.Decoder decoder = Base64.getDecoder();
@@ -70,9 +74,10 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
         invitationResponse.setToken(token);
         invitationResponse.setResponseStatus(Response.Status.OK.getStatusCode());
         String inviteURL = "https://prod.foo.redhat.com:1337/?token=" + token + "&email=" + invitation.getEmailId();
-        reactiveMailer.send(Mail.withText(invitation.getEmailId(), "[Action Required] Invitation from OpenRota",
-                "You are invited to join OpenRota. Click on the link to join:\n" + inviteURL))
-                .subscribe().with(t -> System.out.println("Mail sent to " + invitation.getEmailId()));
+        sharedResourceInvitation.to(invitation.getEmailId())
+        .subject("[Action Required] Invitation from OpenRota")
+        .data("invitationLink", inviteURL)
+        .send().subscribe().with(t -> System.out.println("Mail sent to " + invitation.getEmailId()));
         return invitationResponse;
     }
 
