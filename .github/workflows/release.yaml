@@ -1,0 +1,96 @@
+name: Release Workflow
+on:
+  workflow_dispatch:
+    inputs:
+      release-version:
+        description: 'Version being released'
+        required: true
+      snapshot-version:
+        description: 'Next snapshot version'
+        required: true
+      branch:
+        description: 'Branch to release from'
+        required: true
+        default: 'main'
+jobs:
+  release:
+    runs-on: ubuntu-18.04
+    if: github.repository_owner == 'openrota'
+    env:
+      IS_PRE_RELEASE: false
+    steps:
+      - name: Log Metadata
+        run: |
+          echo "==========================================================================================================="
+          echo "Release Module: ${{ env.GITHUB_REPOSITORY }}
+          echo "Release Version: ${{ github.event.inputs.release-version }}
+          echo "Release Branch: ${{ github.event.inputs.branch }}"
+          echo "Release Actor: ${{ env.GITHUB_ACTOR }}"
+          echo "Next Snapshot Version: ${{ github.event.inputs.snapshot-version }}"
+          echo "==========================================================================================================="
+
+      - name: Set up JDK 11
+        uses: AdoptOpenJDK/install-jdk@v1
+        with:
+          version: '11'
+          architecture: x64
+
+      - name: Set up Gren
+        run: npm install github-release-notes -g
+
+      - name: Checkout Code
+        run: |
+          git init
+          git config --global user.name "openrota-ci"
+          git config --global user.email "openrota.ci@gmail.com"
+          git remote add origin "https://openrota-ci:${{ secrets.ACCESS_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git"
+          git fetch
+          git checkout ${{ github.event.inputs.branch }}
+          git branch --set-upstream-to=origin/${{ github.event.inputs.branch }}
+          git pull
+
+      - name: Update Release Version ${{ github.event.inputs.release-version}}
+        run: ./mvnw versions:set -DnewVersion=${{ github.event.inputs.release-version}} -DgenerateBackupPoms=false -DprocessAllModules=true
+
+      - name: Build Project
+        env:
+          SKIP_TESTS=false
+          BUILD_FLAGS='-Dmaven.javadoc.skip=true --no-transfer-progress -DtrimStackTrace=false -Dmaven.wagon.httpconnectionManager.maxTotal=30 -Dmaven.wagon.http.retryHandler.count=5'
+        run: make build-project
+          
+      - name: Commit Release Version Change
+        run: |
+          git add .
+          git commit -m "Automated update to Release Version:: ${{ github.event.inputs.release-version}}"
+          git push
+
+      - name: Determine Release Type
+        if: "contains(github.event.inputs.release-version, 'RC')"
+        run: |
+          echo "This is a pre-release. Setting environment variable 'IS_PRE_RELEASE' to true"
+          echo "IS_PRE_RELEASE=true" >> $GITHUB_ENV
+      
+      - name: Create GitHub Release
+        run: |
+          echo "IS_PRE_RELEASE=$IS_PRE_RELEASE"
+          ./.github/scripts/create-github-release.sh ${{ github.event.inputs.release-version}} ${{ github.event.inputs.branch}} $GITHUB_REPOSITORY ${{ secrets.ACCESS_TOKEN }} ${{ env.IS_PRE_RELEASE }}
+      
+      - name: Generate Release Notes
+        run: gren release --token=${{ secrets.GITHUB_TOKEN }} --override --debug --data-source=milestones --milestone-match="Release ${{ github.event.inputs.release-version }}"  
+
+      - name: Update Snapshot Version ${{ github.event.inputs.snapshot-version}}
+        run: ./mvnw versions:set -DnewVersion=${{ github.event.inputs.snapshot-version}} -DgenerateBackupPoms=false -DprocessAllModules=true
+
+      - name: Commit Snapshot Version ${{ github.event.inputs.snapshot-version}}
+        run: |
+          git add .
+          git commit -m "Automated update to next Snapshot Version: ${{ github.event.inputs.snapshot-version}}"
+          git push
+
+      - name: Google Chat Notification
+        if: ${{ failure() }}
+        uses: Co-qn/google-chat-notification@releases/v1
+        with:
+          name: ${{ env.GITHUB_REPOSITORY }} - ${{ github.job }}
+          url: ${{ secrets.GOOGLE_CHAT_WEBHOOK }}
+          status: ${{ job.status }}
