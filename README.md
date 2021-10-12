@@ -1,4 +1,4 @@
-[![Verify Build Workflow](https://github.com/shareNwork/shareNwork-backend/actions/workflows/verify.yaml/badge.svg?branch=main)](https://github.com/shareNwork/shareNwork-backend/actions/workflows/verify.yaml)
+[![Verify Build Workflow](https://github.com/openrota/openrota-backend/actions/workflows/verify.yaml/badge.svg)](https://github.com/openrota/openrota-backend/actions/workflows/verify.yaml)
 
 # Quarkus Crud with Postgres & GraphQL
 
