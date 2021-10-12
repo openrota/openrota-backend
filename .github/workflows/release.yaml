@@ -15,7 +15,7 @@ on:
 jobs:
   release:
     runs-on: ubuntu-18.04
-    if: github.repository_owner == 'shareNwork'
+    if: github.repository_owner == 'openrota'
     env:
       IS_PRE_RELEASE: false
     steps:
