@@ -192,6 +192,23 @@
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                <execution>
+                    <phase>validate</phase>
+                    <id>parse-version</id>
+                    <goals>
+                    <goal>parse-version</goal>
+                    </goals>
+                    <configuration>
+                        <propertyPrefix>parsedVersion</propertyPrefix>
+                    </configuration>
+                </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
     <profiles>
@@ -230,6 +247,36 @@
             </build>
             <properties>
                 <quarkus.package.type>native</quarkus.package.type>
+            </properties>
+        </profile>
+        <profile>
+            <id>production</id>
+            <activation>
+                <property>
+                    <name>production</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <executions>
+                            <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                            <configuration>
+                                <finalName>${project.artifactId}-${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</finalName>
+                                <classifier>production</classifier>
+                            </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            <properties>
+                <quarkus.package.type>production</quarkus.package.type>
             </properties>
         </profile>
     </profiles>
