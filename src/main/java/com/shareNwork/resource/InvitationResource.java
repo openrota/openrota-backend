@@ -9,23 +9,29 @@ import org.eclipse.microprofile.graphql.GraphQLApi;
 import org.eclipse.microprofile.graphql.Mutation;
 import org.eclipse.microprofile.graphql.Query;
 
-import java.text.ParseException;
+import java.util.List;
 
 @AllArgsConstructor
 @GraphQLApi
 public class InvitationResource {
 
-   private InvitationRepository invitationRepository;
+    private InvitationRepository invitationRepository;
 
-   @Mutation
-   @Description("Create a new token")
-   public InvitationResponse createInvitationToken(Invitation invitation) {
-      return this.invitationRepository.createInvitationToken(invitation);
-   }
+    @Query("invitation")
+    @Description("Get all invitations")
+    public List<Invitation> findAllInvitations() {
+        return this.invitationRepository.findAll().list();
+    }
 
-   @Query("verify")
-   @Description("Verify Email")
-   public boolean verifyEmail(String emailId, String token) {
-      return this.invitationRepository.verifyToken(emailId, token);
-   }
+    @Mutation
+    @Description("Create a new token")
+    public List<InvitationResponse> createInvitationToken(List<Invitation> invitationlist) {
+        return this.invitationRepository.createInvitationToken(invitationlist);
+    }
+
+    @Query("verify")
+    @Description("Verify Email")
+    public boolean verifyEmail(String emailId, String token) {
+        return this.invitationRepository.verifyToken(emailId, token);
+    }
 }
