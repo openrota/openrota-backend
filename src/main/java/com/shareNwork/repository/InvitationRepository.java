@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
@@ -46,39 +47,44 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
     }
 
     @Transactional
-    public InvitationResponse createInvitationToken(Invitation invitation) {
+    public List<InvitationResponse> createInvitationToken(List<Invitation> invitationlist) {
+        List<InvitationResponse> responses = new ArrayList<>();
+        for (Invitation invitation : invitationlist) {
 
-        InvitationResponse invitationResponse = new InvitationResponse();
-        List<Invitation> invitations = listAll();
+            InvitationResponse invitationResponse = new InvitationResponse();
+            List<Invitation> invitations = listAll();
 
-        for (Invitation invitation1 : invitations) {
-            if (invitation1.getEmailId().equals(invitation.getEmailId())) {
-                invitationResponse.setResponseStatus(Response.Status.CONFLICT.getStatusCode());
-                invitationResponse.setToken(null);
-                return invitationResponse;
+            for (Invitation invitation1 : invitations) {
+                if (invitation1.getEmailId().equals(invitation.getEmailId())) {
+                    invitationResponse.setResponseStatus(Response.Status.CONFLICT.getStatusCode());
+                    invitationResponse.setToken(null);
+                    responses.add(invitationResponse);
+                    return responses;
+                }
             }
+
+            String token = Jwts.builder()
+                    .claim("email", invitation.getEmailId())
+                    .setIssuedAt(new java.util.Date())
+                    .setExpiration(DateUtils.addHours(new java.util.Date(), 3))
+                    .signWith(
+                            HS256,
+                            TextCodec.BASE64.decode("Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5E=")
+                    )
+                    .compact();
+
+            invitation.setStatus(InvitationStatus.PENDING);
+            persist(invitation);
+            invitationResponse.setToken(token);
+            invitationResponse.setResponseStatus(Response.Status.OK.getStatusCode());
+            String inviteURL = "https://prod.foo.redhat.com:1337/?token=" + token + "&email=" + invitation.getEmailId();
+            sharedResourceInvitation.to(invitation.getEmailId())
+                    .subject("[Action Required] Invitation from OpenRota")
+                    .data("invitationLink", inviteURL)
+                    .send().subscribe().with(t -> System.out.println("Mail sent to " + invitation.getEmailId()));
+            responses.add(invitationResponse);
         }
-
-        String token = Jwts.builder()
-                .claim("email", invitation.getEmailId())
-                .setIssuedAt(new java.util.Date())
-                .setExpiration(DateUtils.addHours(new java.util.Date(), 3))
-                .signWith(
-                        HS256,
-                        TextCodec.BASE64.decode("Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5E=")
-                )
-                .compact();
-
-        invitation.setStatus(InvitationStatus.PENDING);
-        persist(invitation);
-        invitationResponse.setToken(token);
-        invitationResponse.setResponseStatus(Response.Status.OK.getStatusCode());
-        String inviteURL = "https://prod.foo.redhat.com:1337/?token=" + token + "&email=" + invitation.getEmailId();
-        sharedResourceInvitation.to(invitation.getEmailId())
-        .subject("[Action Required] Invitation from OpenRota")
-        .data("invitationLink", inviteURL)
-        .send().subscribe().with(t -> System.out.println("Mail sent to " + invitation.getEmailId()));
-        return invitationResponse;
+        return responses;
     }
 
     @Transactional
