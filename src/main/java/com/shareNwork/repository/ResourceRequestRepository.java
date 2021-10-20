@@ -2,6 +2,7 @@ package com.shareNwork.repository;
 
 import com.shareNwork.domain.ResourceRequest;
 import com.shareNwork.domain.SharedResource;
+import com.shareNwork.domain.constants.ResourceRequestStatus;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -19,6 +20,7 @@ public class ResourceRequestRepository implements PanacheRepository<ResourceRequ
     @Transactional
     public ResourceRequest updateOrCreate(ResourceRequest shareResourceRequest) throws ParseException {
         if (shareResourceRequest.id == null) {
+            shareResourceRequest.setStatus(ResourceRequestStatus.PENDING);
             persist(shareResourceRequest);
             return shareResourceRequest;
         } else {
