@@ -92,6 +92,11 @@ public class SharedResourceRepository implements PanacheRepository<SharedResourc
     }
 
     @Transactional
+    public SharedResource findByEmailId(String emailId) {
+        return find("emailId", emailId).firstResult();
+    }
+
+    @Transactional
     public List<Employee> findByCriteria(EmployeeFilter filter) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Employee> criteriaQuery = builder.createQuery(Employee.class);

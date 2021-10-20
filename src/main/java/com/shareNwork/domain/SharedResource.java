@@ -1,5 +1,6 @@
 package com.shareNwork.domain;
 
+import com.shareNwork.domain.constants.ResourceAvailabilityStatus;
 import lombok.*;
 
 import javax.persistence.*;
@@ -26,8 +27,13 @@ public class SharedResource extends Employee {
     @OneToMany(mappedBy = "sharedResource")
     private Set<EmployeeProjectDetail> employeeProjectDetails;
 
-    public SharedResource(String firstName, String lastName, String employeeId, String emailId, String designation, String totalExperience) {
+    @Getter
+    @Setter
+    private ResourceAvailabilityStatus status;
+
+    public SharedResource(String firstName, String lastName, String employeeId, String emailId, String designation, String totalExperience, ResourceAvailabilityStatus status) {
         super(firstName, lastName, employeeId, emailId, designation);
         this.totalExperience = totalExperience;
+        this.status = status;
     }
 }

@@ -30,6 +30,12 @@ public class SharedResource {
         return this.sharedResourceRepository.findById(id);
     }
 
+    @Query("sharedResourceByEmailId")
+    @Description("Get an SR by emailId")
+    public com.shareNwork.domain.SharedResource getSRByEmailId(@Name("emailId") String emailId) {
+        return this.sharedResourceRepository.findByEmailId(emailId);
+    }
+
     @Query("sharedResourceWithFilters")
     @Description("Get all resources using the filters eq, lt,le,gt,ge")
     public List<Employee> findWithFilter(@Name("filter") EmployeeFilter filter) {
