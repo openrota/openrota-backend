@@ -3,6 +3,7 @@ package com.shareNwork.repository;
 import com.shareNwork.domain.Employee;
 import com.shareNwork.domain.EmployeeSkillProficiency;
 import com.shareNwork.domain.SharedResource;
+import com.shareNwork.domain.constants.ResourceAvailabilityStatus;
 import com.shareNwork.domain.filters.EmployeeFilter;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 
@@ -34,6 +35,17 @@ public class SharedResourceRepository implements PanacheRepository<SharedResourc
             addSkillsToEmployee(shareResource.id, shareResource.getSkillProficiencies());
             return em.merge(shareResource);
         }
+    }
+
+    @Transactional
+    public SharedResource createSharedResourceAccount(String name, String emailId) {
+        SharedResource sharedResource = new SharedResource();
+        sharedResource.setFirstName(name);
+        sharedResource.setEmailId(emailId);
+        sharedResource.setStatus(ResourceAvailabilityStatus.AVAILABLE);
+        sharedResource.setDesignation(" Associate software Engineer");
+        sharedResource.persist();
+        return sharedResource;
     }
 
     @Transactional

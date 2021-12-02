@@ -1,6 +1,7 @@
 package com.shareNwork.resource;
 
 import com.shareNwork.domain.ResourceRequest;
+import com.shareNwork.domain.ResourceRequestSkillsProficiency;
 import com.shareNwork.domain.SharedResource;
 import com.shareNwork.repository.ResourceRequestRepository;
 import com.shareNwork.repository.SharedResourceRepository;
@@ -13,6 +14,7 @@ import org.eclipse.microprofile.graphql.Query;
 import javax.transaction.Transactional;
 import java.text.ParseException;
 import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @GraphQLApi
@@ -24,7 +26,21 @@ public class SRRequestResource {
     @Description("Get all resources request")
     @Transactional
     public List<ResourceRequest> getAllSharedResourceRequest() {
-        return ResourceRequest.listAll();
+        return resourceRequestRepository.listAll();
+    }
+
+    @Query("getSkillsByRequestId")
+    @Description("Get required skills of request Id")
+    @Transactional
+    public List<ResourceRequestSkillsProficiency> getSkillsByRequestId(long id) {
+        return resourceRequestRepository.getSkillsByRequestId(id);
+    }
+
+    @Query("sharedResourceRequestById")
+    @Description("Get resources request by id")
+    @Transactional
+    public ResourceRequest sharedResourceRequestById(long id) {
+        return ResourceRequest.findById(id);
     }
 
     @Mutation

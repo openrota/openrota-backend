@@ -9,8 +9,14 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
+
+import static javax.persistence.CascadeType.PERSIST;
 
 @Entity
 @Data
@@ -32,6 +38,13 @@ public class ResourceRequest extends PanacheEntity {
     private LocalDate endDate;
 
     private ResourceRequestStatus status;
+
+    private LocalDateTime createdAt;
+
+    @Getter
+    @Setter
+    @OneToMany(mappedBy = "resourceRequest", fetch = FetchType.LAZY)
+    List<ResourceRequestSkillsProficiency> skillProficiencies;
 
     public ResourceRequest(Employee requester, String pillar, String project, String taskDetails, LocalDate startDate, LocalDate endDate, ResourceRequestStatus status) {
         this.requester = requester;

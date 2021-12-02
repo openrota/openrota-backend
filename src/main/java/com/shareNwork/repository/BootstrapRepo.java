@@ -6,6 +6,7 @@ import com.shareNwork.domain.constants.ResourceRequestStatus;
 import com.shareNwork.domain.constants.SkillProficiencyLevel;
 import io.quarkus.runtime.StartupEvent;
 import lombok.NoArgsConstructor;
+import org.slf4j.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
@@ -13,6 +14,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @NoArgsConstructor
 @ApplicationScoped
@@ -20,11 +22,13 @@ public class BootstrapRepo {
 
     private SkillRepository skillRepository;
     private SharedResourceRepository sharedResourceRepository;
+    private ResourceRequestRepository resourceRequestRepository;
 
     @Inject
-    public BootstrapRepo(SkillRepository skillRepository, SharedResourceRepository sharedResourceRepository) {
+    public BootstrapRepo(SkillRepository skillRepository, SharedResourceRepository sharedResourceRepository, ResourceRequestRepository resourceRequestRepository) {
         this.skillRepository = skillRepository;
         this.sharedResourceRepository = sharedResourceRepository;
+        this.resourceRequestRepository = resourceRequestRepository;
     }
 
     @Transactional
@@ -50,13 +54,12 @@ public class BootstrapRepo {
         manager1.persist();
 
         ResourceRequest resourceRequest = new ResourceRequest(manager1, "Business Automation", "Kogito Website styling", "a very important one", LocalDate.now(), LocalDate.now(), ResourceRequestStatus.PENDING);
-
         resourceRequest.persist();
-//
-//        ResourceRequestSkillsProficiency resourceRequestSkillsProficiency = new ResourceRequestSkillsProficiency(SkillProficiencyLevel.ADVANCED);
-//        resourceRequestSkillsProficiency.setSkill(skill1);
-//        resourceRequestSkillsProficiency.setResourceRequest(resourceRequest);
-//        resourceRequestSkillsProficiency.persist();
+
+        ResourceRequestSkillsProficiency resourceRequestSkillsProficiency = new ResourceRequestSkillsProficiency(SkillProficiencyLevel.ADVANCED);
+        resourceRequestSkillsProficiency.setSkill(skill1);
+        resourceRequestSkillsProficiency.setResourceRequest(resourceRequest);
+        resourceRequestSkillsProficiency.persist();
 
         EmployeeSkillProficiency employeeSkillProficiency = new EmployeeSkillProficiency(SkillProficiencyLevel.ADVANCED);
         employeeSkillProficiency.setSkill(skill1);

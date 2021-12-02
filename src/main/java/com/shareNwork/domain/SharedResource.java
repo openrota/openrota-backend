@@ -24,11 +24,6 @@ public class SharedResource extends Employee {
 
     @Getter
     @Setter
-    @OneToMany(mappedBy = "sharedResource")
-    private Set<EmployeeProjectDetail> employeeProjectDetails;
-
-    @Getter
-    @Setter
     private ResourceAvailabilityStatus status;
 
     public SharedResource(String firstName, String lastName, String employeeId, String emailId, String designation, String totalExperience, ResourceAvailabilityStatus status) {

@@ -20,18 +20,24 @@ public class InvitationResource {
     @Query("invitation")
     @Description("Get all invitations")
     public List<Invitation> findAllInvitations() {
-        return this.invitationRepository.findAll().list();
+        return this.invitationRepository.listAll();
+    }
+
+    @Query("getInvitationById")
+    @Description("Get invitations by Id")
+    public Invitation getInvitationById(long id) {
+        return this.invitationRepository.findById(id);
     }
 
     @Mutation
     @Description("Create a new token")
-    public List<InvitationResponse> createInvitationToken(List<Invitation> invitationlist) {
-        return this.invitationRepository.createInvitationToken(invitationlist);
+    public InvitationResponse createInvitationToken(Invitation invitation) {
+        return this.invitationRepository.createInvitation(invitation);
     }
 
-    @Query("verify")
-    @Description("Verify Email")
-    public boolean verifyEmail(String emailId, String token) {
-        return this.invitationRepository.verifyToken(emailId, token);
+    @Mutation
+    @Description("Verify Invitation")
+    public InvitationResponse verifyInvitation(String emailId, String token, String name) {
+        return this.invitationRepository.verifyToken(emailId, token, name);
     }
 }

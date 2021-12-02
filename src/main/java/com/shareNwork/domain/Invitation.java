@@ -1,5 +1,7 @@
 package com.shareNwork.domain;
 
+import java.time.LocalDateTime;
+
 import com.shareNwork.domain.constants.InvitationStatus;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import lombok.AllArgsConstructor;
@@ -19,6 +21,7 @@ public class Invitation extends PanacheEntity {
 
     @Column(unique = true)
     private String emailId;
-
-   private InvitationStatus status;
+    private InvitationStatus status;
+    private String token;
+    private LocalDateTime createdAt;
 }
