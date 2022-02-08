@@ -21,7 +21,6 @@ import java.util.Objects;
 @EqualsAndHashCode(callSuper = false)
 public class Employee extends PanacheEntity {
 
-    //    @NotNull
     private String firstName;
 
     private String lastName;

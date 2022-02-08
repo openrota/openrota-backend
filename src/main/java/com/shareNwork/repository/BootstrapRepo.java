@@ -70,6 +70,13 @@ public class BootstrapRepo {
         employeeSkillProficiency2.setSkill(skill2);
         employeeSkillProficiency2.setEmployee(employee2);
         employeeSkillProficiency2.persist();
+
+        AllowedDesignation allowedDesignation = new AllowedDesignation("Associate Manager, Software Engineering");
+        AllowedDesignation allowedDesignation1 = new AllowedDesignation("Manager, Software Engineering");
+
+        allowedDesignation1.persist();
+        allowedDesignation.persist();
+
     }
 
 }
