@@ -2,19 +2,18 @@ package com.shareNwork.resource;
 
 import com.shareNwork.domain.ResourceRequest;
 import com.shareNwork.domain.ResourceRequestSkillsProficiency;
-import com.shareNwork.domain.SharedResource;
 import com.shareNwork.repository.ResourceRequestRepository;
-import com.shareNwork.repository.SharedResourceRepository;
+import io.quarkus.panache.common.Page;
 import lombok.AllArgsConstructor;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.GraphQLApi;
 import org.eclipse.microprofile.graphql.Mutation;
+import org.eclipse.microprofile.graphql.Name;
 import org.eclipse.microprofile.graphql.Query;
 
 import javax.transaction.Transactional;
 import java.text.ParseException;
 import java.util.List;
-import java.util.Set;
 
 @AllArgsConstructor
 @GraphQLApi
@@ -27,6 +26,12 @@ public class SRRequestResource {
     @Transactional
     public List<ResourceRequest> getAllSharedResourceRequest() {
         return resourceRequestRepository.listAll();
+    }
+
+    @Query("sharedResourceRequestsByPage")
+    @Description("Get SharedResourceRequest with pagination")
+    public List<ResourceRequest> getAccessRequestsByPage(@Name("pageSize") int pageSize, @Name("pageOffset") int pageOffset) {
+        return this.resourceRequestRepository.findAll().page(Page.of(pageOffset, pageSize)).list();
     }
 
     @Query("getSkillsByRequestId")

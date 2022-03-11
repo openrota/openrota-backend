@@ -4,6 +4,7 @@ import com.shareNwork.domain.Employee;
 import com.shareNwork.domain.EmployeeSkillProficiency;
 import com.shareNwork.domain.filters.EmployeeFilter;
 import com.shareNwork.repository.SharedResourceRepository;
+import io.quarkus.panache.common.Page;
 import lombok.AllArgsConstructor;
 import org.eclipse.microprofile.graphql.*;
 
@@ -24,6 +25,11 @@ public class SharedResource {
         return this.sharedResourceRepository.listAll();
     }
 
+    @Query("sharedResourcesByPage")
+    @Description("Get SharedResource with pagination")
+    public List<com.shareNwork.domain.SharedResource> getSharedResourcesByPage(@Name("pageSize") int pageSize, @Name("pageOffset") int pageOffset) {
+        return this.sharedResourceRepository.findAll().page(Page.of(pageOffset, pageSize)).list();
+    }
     @Query("sharedResourceById")
     @Description("Get an SR by id")
     public com.shareNwork.domain.SharedResource getSRById(@Name("id") Long id) {

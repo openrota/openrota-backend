@@ -2,17 +2,16 @@ package com.shareNwork.resource;
 
 import java.util.List;
 
-import javax.transaction.TransactionScoped;
 import javax.transaction.Transactional;
 
 import com.shareNwork.domain.AccessRequest;
-import com.shareNwork.domain.Invitation;
-import com.shareNwork.domain.InvitationResponse;
 import com.shareNwork.domain.constants.InvitationStatus;
+import io.quarkus.panache.common.Page;
 import lombok.AllArgsConstructor;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.GraphQLApi;
 import org.eclipse.microprofile.graphql.Mutation;
+import org.eclipse.microprofile.graphql.Name;
 import org.eclipse.microprofile.graphql.Query;
 
 @AllArgsConstructor
@@ -23,6 +22,12 @@ public class AccessRequestResource {
     @Description("Get all access requests")
     public List<AccessRequest> findAllRequests() {
         return AccessRequest.listAll();
+    }
+
+    @Query("accessRequestsByPage")
+    @Description("Get AccessRequests with pagination")
+    public List<AccessRequest> getAccessRequestsByPage(@Name("pageSize") int pageSize, @Name("pageOffset") int pageOffset) {
+        return AccessRequest.findAll().page(Page.of(pageOffset, pageSize)).list();
     }
 
     @Mutation

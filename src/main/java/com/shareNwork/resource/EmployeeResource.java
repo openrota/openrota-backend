@@ -3,6 +3,7 @@ package com.shareNwork.resource;
 import com.shareNwork.domain.Employee;
 import com.shareNwork.domain.filters.EmployeeFilter;
 import com.shareNwork.repository.EmployeeRepository;
+import io.quarkus.panache.common.Page;
 import lombok.AllArgsConstructor;
 import org.eclipse.microprofile.graphql.*;
 
@@ -19,6 +20,12 @@ public class EmployeeResource {
     public List<Employee> findAll() {
 
         return this.employeeRepository.findAll().list();
+    }
+
+    @Query("employeesByPage")
+    @Description("Get employees with pagination")
+    public List<Employee> getEmployeesByPage(@Name("pageSize") int pageSize, @Name("pageOffset") int pageOffset) {
+        return this.employeeRepository.findAll().page(Page.of(pageOffset, pageSize)).list();
     }
 
     @Query("employeesWithFilter")
