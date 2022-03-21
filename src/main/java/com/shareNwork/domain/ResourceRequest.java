@@ -27,6 +27,9 @@ public class ResourceRequest extends PanacheEntity {
     @ManyToOne
     private Employee requester;
 
+    @ManyToOne
+    private SharedResource resource;
+
     private String pillar;
 
     private String project;

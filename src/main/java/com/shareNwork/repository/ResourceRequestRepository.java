@@ -1,21 +1,22 @@
 package com.shareNwork.repository;
 
-import java.text.ParseException;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import com.shareNwork.domain.ResourceRequest;
+import com.shareNwork.domain.ResourceRequestSkillsProficiency;
+import com.shareNwork.domain.SharedResource;
+import com.shareNwork.domain.constants.ResourceRequestStatus;
+import com.shareNwork.domain.constants.RowAction;
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.ws.rs.NotFoundException;
-
-import com.shareNwork.domain.EmployeeSkillProficiency;
-import com.shareNwork.domain.ResourceRequest;
-import com.shareNwork.domain.ResourceRequestSkillsProficiency;
-import com.shareNwork.domain.constants.ResourceRequestStatus;
-import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @ApplicationScoped
 public class ResourceRequestRepository implements PanacheRepository<ResourceRequest> {
@@ -36,6 +37,29 @@ public class ResourceRequestRepository implements PanacheRepository<ResourceRequ
             return em.merge(shareResourceRequest);
         }
     }
+
+    @Transactional
+    public ResourceRequest handleActions(RowAction actionName, ResourceRequest resourceRequest) throws ParseException {
+        ResourceRequest request = findById(resourceRequest.id);
+        if (request != null) {
+            if (actionName.equals(RowAction.APPROVE)) {
+                // send an email here
+                if(resourceRequest.getResource().id != null){
+                    Optional<SharedResource> sharedResource = SharedResource.findByIdOptional(resourceRequest.getResource().id);
+                    sharedResource.ifPresent(sharedResource1 -> request.setResource(sharedResource1));
+                }
+                request.setStatus(ResourceRequestStatus.COMPLETED);
+            } else if (actionName.equals(RowAction.REJECT)) {
+                // send an email here
+                request.setStatus(ResourceRequestStatus.CANCELLED);
+            }
+            em.merge(request);
+        } else {
+            throw new NotFoundException();
+        }
+        return request;
+    }
+
 
     @Transactional
     public List<ResourceRequestSkillsProficiency> getSkillsByRequestId(long id) {

@@ -36,6 +36,12 @@ public class InvitationResource {
     }
 
     @Mutation
+    @Description("Refresh token")
+    public Invitation resendInvitation(Long id) {
+        return this.invitationRepository.resendInvitation(id);
+    }
+
+    @Mutation
     @Description("Verify Invitation")
     public InvitationResponse verifyInvitation(String emailId, String token, String name) {
         return this.invitationRepository.verifyToken(emailId, token, name);

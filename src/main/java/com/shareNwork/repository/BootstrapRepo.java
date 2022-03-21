@@ -1,9 +1,11 @@
 package com.shareNwork.repository;
 
 import com.shareNwork.domain.*;
+import com.shareNwork.domain.constants.InvitationStatus;
 import com.shareNwork.domain.constants.ResourceAvailabilityStatus;
 import com.shareNwork.domain.constants.ResourceRequestStatus;
 import com.shareNwork.domain.constants.SkillProficiencyLevel;
+import com.shareNwork.domain.processEngine.Process;
 import io.quarkus.runtime.StartupEvent;
 import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
@@ -54,8 +56,16 @@ public class BootstrapRepo {
         manager1.persist();
 
         ResourceRequest resourceRequest = new ResourceRequest(manager1, "Business Automation", "Kogito Website styling", "a very important one", LocalDate.now(), LocalDate.now(), ResourceRequestStatus.PENDING);
+        resourceRequest.setResource(employee2);
         resourceRequest.persist();
 
+        ResourceRequest resourceRequest2 = new ResourceRequest(manager1, "Integration", "Serverless workflow", "Documentation", LocalDate.now(), LocalDate.now(), ResourceRequestStatus.PENDING);
+//        resourceRequest2.setResource(employee1);
+        resourceRequest2.persist();
+
+        AccessRequest accessRequest = new AccessRequest("ranand@redhat.com", InvitationStatus.PENDING, "Temporary web site building work");
+        accessRequest.persist();
+        
         ResourceRequestSkillsProficiency resourceRequestSkillsProficiency = new ResourceRequestSkillsProficiency(SkillProficiencyLevel.ADVANCED);
         resourceRequestSkillsProficiency.setSkill(skill1);
         resourceRequestSkillsProficiency.setResourceRequest(resourceRequest);
@@ -76,6 +86,13 @@ public class BootstrapRepo {
 
         allowedDesignation1.persist();
         allowedDesignation.persist();
+
+        Process process1 = new Process("Project Request");
+        Process process2 = new Process("Candidate Invitations");
+        Process process3 = new Process("Access Request");
+        process1.persist();
+        process2.persist();
+        process3.persist();
 
     }
 

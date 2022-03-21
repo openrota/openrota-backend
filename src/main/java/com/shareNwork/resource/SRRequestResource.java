@@ -3,6 +3,7 @@ package com.shareNwork.resource;
 import com.shareNwork.domain.ResourceRequest;
 import com.shareNwork.domain.ResourceRequestSkillsProficiency;
 import com.shareNwork.domain.SharedResource;
+import com.shareNwork.domain.constants.RowAction;
 import com.shareNwork.repository.ResourceRequestRepository;
 import com.shareNwork.repository.SharedResourceRepository;
 import lombok.AllArgsConstructor;
@@ -47,6 +48,12 @@ public class SRRequestResource {
     @Description("Create a new resource request")
     public com.shareNwork.domain.ResourceRequest createOrUpdateResourceRequest(com.shareNwork.domain.ResourceRequest resourceRequest) throws ParseException {
         return this.resourceRequestRepository.updateOrCreate(resourceRequest);
+    }
+
+    @Mutation
+    @Description("resource request actions")
+    public com.shareNwork.domain.ResourceRequest handleResourceRequestActions(RowAction action, ResourceRequest resourceRequest) throws ParseException {
+        return this.resourceRequestRepository.handleActions(action, resourceRequest);
     }
 
 }

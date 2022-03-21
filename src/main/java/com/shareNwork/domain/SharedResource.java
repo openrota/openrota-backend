@@ -20,6 +20,11 @@ public class SharedResource extends Employee {
 
     @Getter
     @Setter
+    @OneToMany(mappedBy = "resource", fetch = FetchType.LAZY)
+    List<ResourceRequest> projects;
+
+    @Getter
+    @Setter
     private String totalExperience;
 
     @Getter

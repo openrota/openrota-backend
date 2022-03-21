@@ -9,6 +9,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import com.shareNwork.domain.Invitation;
@@ -113,6 +114,25 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
         invitationResponse.setResponseStatus(Response.Status.OK.getStatusCode());
 
         return invitationResponse;
+    }
+
+
+    @Transactional
+    public Invitation resendInvitation(Long invitationId) {
+        Invitation invitation = Invitation.findById(invitationId);
+
+        if (invitation != null) {
+            final String token = generateToken("email", invitation.getEmailId());
+
+            // save the invitation
+            invitation.setCreatedAt(LocalDateTime.now());
+            invitation.setToken(token);
+            invitation.setStatus(InvitationStatus.PENDING);
+            invitation.persist();
+        } else {
+            throw new WebApplicationException("Invitation not found");
+        }
+        return invitation;
     }
 
     private String generateToken(String claim, String str) {
