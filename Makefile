@@ -53,7 +53,7 @@ build-project:
 	@echo " SKIP_TESTS: $(SKIP_TESTS)"
 	@echo " BUILD_FLAGS: $(BUILD_FLAGS)"
 	@echo "======================================================================"
-	./mvnw clean install -Dquarkus.package.type=fast-jar -DskipTests=$(SKIP_TESTS) $(BUILD_FLAGS)
+	./mvnw clean install -DskipTests=$(SKIP_TESTS) $(BUILD_FLAGS)
 
 
 
