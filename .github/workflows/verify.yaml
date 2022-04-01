@@ -29,6 +29,8 @@ jobs:
           architecture: x64
 
       - name: Build Project
+        env:
+          SKIP_TESTS: "true"
         run: make build-project
 
       - name: Login to DockerHub Registry
