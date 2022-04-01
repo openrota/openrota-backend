@@ -48,18 +48,18 @@ public class BootstrapRepo {
 
         Employee manager1 = new Employee("Imran", "khalidi", "RH21821", "ikhalidi@redhat.com", "Manager");
         SharedResource employee1 = new SharedResource("Rishi", "raj", "RISH323", "ranand@redhat.com", "engineer", "12", ResourceAvailabilityStatus.AVAILABLE);
-        SharedResource employee2 = new SharedResource("Abhishek", "kumar", "ABHI323", "ankumr@redhat.com", "engineer", "23", ResourceAvailabilityStatus.UNAVAILABLE);
+        SharedResource employee2 = new SharedResource("Abhishek", "kumar", "ABHI323", "abkuma@redhat.com", "engineer", "23", ResourceAvailabilityStatus.UNAVAILABLE);
 
         this.sharedResourceRepository.persist(employee1);
         this.sharedResourceRepository.persist(employee2);
 
         manager1.persist();
 
-        ResourceRequest resourceRequest = new ResourceRequest(manager1, "Business Automation", "Kogito Website styling", "a very important one", LocalDate.now(), LocalDate.now(), ResourceRequestStatus.PENDING);
+        ResourceRequest resourceRequest = new ResourceRequest(manager1, "Business Automation", "Kogito Website styling", "a very important one", LocalDate.now().toString(), LocalDate.now().toString(), ResourceRequestStatus.PENDING);
         resourceRequest.setResource(employee2);
         resourceRequest.persist();
 
-        ResourceRequest resourceRequest2 = new ResourceRequest(manager1, "Integration", "Serverless workflow", "Documentation", LocalDate.now(), LocalDate.now(), ResourceRequestStatus.PENDING);
+        ResourceRequest resourceRequest2 = new ResourceRequest(manager1, "Integration", "Serverless workflow", "Documentation", LocalDate.now().toString(), LocalDate.now().toString(), ResourceRequestStatus.PENDING);
 //        resourceRequest2.setResource(employee1);
         resourceRequest2.persist();
 
