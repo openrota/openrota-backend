@@ -55,11 +55,11 @@ public class BootstrapRepo {
 
         manager1.persist();
 
-        ResourceRequest resourceRequest = new ResourceRequest(manager1, "Business Automation", "Kogito Website styling", "a very important one", LocalDate.now(), LocalDate.now(), ResourceRequestStatus.PENDING);
+        ResourceRequest resourceRequest = new ResourceRequest(manager1, "Business Automation", "Kogito Website styling", "a very important one", LocalDateTime.now(), LocalDateTime.now(), ResourceRequestStatus.PENDING);
         resourceRequest.setResource(employee2);
         resourceRequest.persist();
 
-        ResourceRequest resourceRequest2 = new ResourceRequest(manager1, "Integration", "Serverless workflow", "Documentation", LocalDate.now(), LocalDate.now(), ResourceRequestStatus.PENDING);
+        ResourceRequest resourceRequest2 = new ResourceRequest(manager1, "Integration", "Serverless workflow", "Documentation", LocalDateTime.now(), LocalDateTime.now(), ResourceRequestStatus.PENDING);
 //        resourceRequest2.setResource(employee1);
         resourceRequest2.persist();
 

@@ -3,8 +3,13 @@ package com.shareNwork.domain;
 import com.shareNwork.domain.constants.ResourceAvailabilityStatus;
 import com.shareNwork.domain.constants.ResourceRequestStatus;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import io.smallrye.graphql.api.Scalar;
+import io.smallrye.graphql.api.ToScalar;
 import lombok.*;
+import org.eclipse.microprofile.graphql.DateFormat;
 
+import javax.json.bind.annotation.JsonbDateFormat;
+import javax.json.bind.annotation.JsonbProperty;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
@@ -36,9 +41,9 @@ public class ResourceRequest extends PanacheEntity {
 
     private String taskDetails;
 
-    private LocalDate startDate;
+    private LocalDateTime startDate;
 
-    private LocalDate endDate;
+    private LocalDateTime endDate;
 
     private ResourceRequestStatus status;
 
@@ -49,7 +54,7 @@ public class ResourceRequest extends PanacheEntity {
     @OneToMany(mappedBy = "resourceRequest", fetch = FetchType.LAZY)
     List<ResourceRequestSkillsProficiency> skillProficiencies;
 
-    public ResourceRequest(Employee requester, String pillar, String project, String taskDetails, LocalDate startDate, LocalDate endDate, ResourceRequestStatus status) {
+    public ResourceRequest(Employee requester, String pillar, String project, String taskDetails, LocalDateTime startDate, LocalDateTime endDate, ResourceRequestStatus status) {
         this.requester = requester;
         this.pillar = pillar;
         this.project = project;

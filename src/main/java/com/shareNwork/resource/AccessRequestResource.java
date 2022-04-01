@@ -3,6 +3,7 @@ package com.shareNwork.resource;
 import com.shareNwork.domain.AccessRequest;
 import com.shareNwork.domain.AllowedDesignationResponse;
 import com.shareNwork.domain.constants.InvitationStatus;
+import com.shareNwork.domain.constants.RowAction;
 import com.shareNwork.repository.AccessRequestRepository;
 import lombok.AllArgsConstructor;
 import org.eclipse.microprofile.graphql.Description;
@@ -61,7 +62,7 @@ public class AccessRequestResource {
 
     @Mutation
     @Description("handle access request actions")
-    public com.shareNwork.domain.AccessRequest handleAccessRequestActions(String actionName, AccessRequest accessRequest) throws ParseException {
+    public com.shareNwork.domain.AccessRequest handleAccessRequestActions(RowAction actionName, AccessRequest accessRequest) throws ParseException {
         return this.accessRequestRepository.handleActions(actionName, accessRequest);
     }
 
