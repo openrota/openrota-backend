@@ -36,7 +36,7 @@ To build production JAR simply run `mvn clean package -Pproduction`
 **NOTE**
 
 In order to run the mailer, add `-Dquarkus.mailer.from=${email} -Dquarkus.mailer.username=${username} -Dquarkus.mailer.password=${password}`
-after `mvn compile quarkus:dev` or `java -jar shareNwork-{$version}-SNAPSHOT-runner.jar` . You can find instructions to configure the app password here: https://quarkus.io/guides/mailer-reference#gmail-specific-configuration
+after `mvn quarkus:dev` or `java -jar shareNwork-{$version}-SNAPSHOT-runner.jar` . You can find instructions to configure the app password here: https://quarkus.io/guides/mailer-reference#gmail-specific-configuration
 
 ---
 
