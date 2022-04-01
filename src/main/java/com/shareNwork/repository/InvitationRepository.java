@@ -112,6 +112,7 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
 
         invitationResponse.setToken(generateToken("email", invitation.getEmailId()));
         invitationResponse.setResponseStatus(Response.Status.OK.getStatusCode());
+        sendEmail(token, invitation.getEmailId());
 
         return invitationResponse;
     }
@@ -124,10 +125,11 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
         if (invitation != null) {
             final String token = generateToken("email", invitation.getEmailId());
 
-            // save the invitation
+            // save the invitation and send email
             invitation.setCreatedAt(LocalDateTime.now());
             invitation.setToken(token);
             invitation.setStatus(InvitationStatus.PENDING);
+            sendEmail(token, invitation.getEmailId());
             invitation.persist();
         } else {
             throw new WebApplicationException("Invitation not found");
@@ -145,6 +147,14 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
                         TextCodec.BASE64.decode("Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5E=")
                 )
                 .compact();
+    }
+
+    public void sendEmail(String token, String email){
+        String inviteURL = "https://prod.foo.redhat.com:1337/?token=" + token + "&email=" + email;
+        sharedResourceInvitation.to(email)
+                .subject("[Action Required] Invitation from OpenRota")
+                .data("invitationLink", inviteURL)
+                .send().subscribe().with(t -> System.out.println("Mail sent to " + email));
     }
 
     @Transactional
