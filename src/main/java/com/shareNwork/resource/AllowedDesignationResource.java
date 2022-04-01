@@ -12,10 +12,11 @@ import org.eclipse.microprofile.graphql.Mutation;
 @AllArgsConstructor
 @GraphQLApi
 public class AllowedDesignationResource {
+
     private AllowedDesignationRepository allowedDesignationRepository;
 
     @Mutation
-    @Description("Check whether desg8ination is whitelisted")
+    @Description("Check whether designation is whitelisted")
     public AllowedDesignationResponse verifyDesignation(String designation) {
         return this.allowedDesignationRepository.verify(designation);
     }

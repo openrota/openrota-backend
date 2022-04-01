@@ -102,6 +102,11 @@
             <artifactId>quarkus-undertow</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-smallrye-health</artifactId>
+        </dependency>
+
         <!--ALL JJWT Dependencies-->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
@@ -141,7 +146,6 @@
             <scope>runtime</scope>
         </dependency>
         -->
-
         <!--Testing-->
         <dependency>
             <groupId>io.quarkus</groupId>

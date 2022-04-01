@@ -28,6 +28,8 @@ public class ResourceRequestRepository implements PanacheRepository<ResourceRequ
     public ResourceRequest updateOrCreate(ResourceRequest shareResourceRequest) throws ParseException {
         if (shareResourceRequest.id == null) {
             shareResourceRequest.setCreatedAt(LocalDateTime.now());
+            shareResourceRequest.setStartDate(LocalDateTime.now());
+            shareResourceRequest.setEndDate(LocalDateTime.now());
             shareResourceRequest.setStatus(ResourceRequestStatus.PENDING);
             persist(shareResourceRequest);
             addSkillsToResourceRequests(shareResourceRequest.id, shareResourceRequest.getSkillProficiencies());
@@ -82,12 +84,14 @@ public class ResourceRequestRepository implements PanacheRepository<ResourceRequ
         if (employee == null) {
             throw new NotFoundException();
         } else {
-            for (ResourceRequestSkillsProficiency employeeSkillProficiency : employeeSkillProficiencies) {
-                if (employeeSkillProficiency.id != null) {
-                    updateSkillsOfEmployee(employeeSkillProficiency.id, employeeSkillProficiency);
-                } else {
-                    employeeSkillProficiency.setResourceRequest(employee);
-                    employeeSkillProficiency.persist();
+            if (employeeSkillProficiencies != null) {
+                for (ResourceRequestSkillsProficiency employeeSkillProficiency : employeeSkillProficiencies) {
+                    if (employeeSkillProficiency.id != null) {
+                        updateSkillsOfEmployee(employeeSkillProficiency.id, employeeSkillProficiency);
+                    } else {
+                        employeeSkillProficiency.setResourceRequest(employee);
+                        employeeSkillProficiency.persist();
+                    }
                 }
             }
         }

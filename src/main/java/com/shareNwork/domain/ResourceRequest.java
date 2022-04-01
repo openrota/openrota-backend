@@ -2,7 +2,10 @@ package com.shareNwork.domain;
 
 import com.shareNwork.domain.constants.ResourceRequestStatus;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import io.smallrye.graphql.api.Scalar;
+import io.smallrye.graphql.api.ToScalar;
 import lombok.*;
+import org.eclipse.microprofile.graphql.DateFormat;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
