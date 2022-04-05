@@ -1,6 +1,5 @@
 package com.shareNwork.domain;
 
-import com.shareNwork.domain.constants.ResourceAvailabilityStatus;
 import com.shareNwork.domain.constants.ResourceRequestStatus;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import io.smallrye.graphql.api.Scalar;
@@ -8,20 +7,18 @@ import io.smallrye.graphql.api.ToScalar;
 import lombok.*;
 import org.eclipse.microprofile.graphql.DateFormat;
 
-import javax.json.bind.annotation.JsonbDateFormat;
-import javax.json.bind.annotation.JsonbProperty;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.List;
-import java.util.Set;
-
-import static javax.persistence.CascadeType.PERSIST;
 
 @Entity
 @Data
@@ -29,7 +26,7 @@ import static javax.persistence.CascadeType.PERSIST;
 @EqualsAndHashCode(callSuper = false)
 public class ResourceRequest extends PanacheEntity {
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Employee requester;
 
     @ManyToOne
@@ -41,9 +38,9 @@ public class ResourceRequest extends PanacheEntity {
 
     private String taskDetails;
 
-    private LocalDateTime startDate;
+    private String startDate;
 
-    private LocalDateTime endDate;
+    private String endDate;
 
     private ResourceRequestStatus status;
 
@@ -54,7 +51,7 @@ public class ResourceRequest extends PanacheEntity {
     @OneToMany(mappedBy = "resourceRequest", fetch = FetchType.LAZY)
     List<ResourceRequestSkillsProficiency> skillProficiencies;
 
-    public ResourceRequest(Employee requester, String pillar, String project, String taskDetails, LocalDateTime startDate, LocalDateTime endDate, ResourceRequestStatus status) {
+    public ResourceRequest(Employee requester, String pillar, String project, String taskDetails, String startDate, String endDate, ResourceRequestStatus status) {
         this.requester = requester;
         this.pillar = pillar;
         this.project = project;
@@ -62,5 +59,20 @@ public class ResourceRequest extends PanacheEntity {
         this.startDate = startDate;
         this.endDate = endDate;
         this.status = status;
+    }
+
+    // TODO unsupported GraphQL Scalar date types
+    public LocalDate getStartLocalDate() {
+        return getParsedDate(getEndDate());
+    }
+
+    // TODO unsupported GraphQL Scalar date types
+    public LocalDate getEndLocalDate() {
+        return getParsedDate(getEndDate());
+    }
+
+    // TODO workaround for unsupported GraphQL Scalar date types
+    private LocalDate getParsedDate(final String date) {
+        return LocalDate.ofInstant(Instant.parse(date), ZoneId.of(ZoneOffset.UTC.getId()));
     }
 }

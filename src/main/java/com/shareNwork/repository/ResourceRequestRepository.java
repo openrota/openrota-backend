@@ -28,8 +28,6 @@ public class ResourceRequestRepository implements PanacheRepository<ResourceRequ
     public ResourceRequest updateOrCreate(ResourceRequest shareResourceRequest) throws ParseException {
         if (shareResourceRequest.id == null) {
             shareResourceRequest.setCreatedAt(LocalDateTime.now());
-            shareResourceRequest.setStartDate(LocalDateTime.now());
-            shareResourceRequest.setEndDate(LocalDateTime.now());
             shareResourceRequest.setStatus(ResourceRequestStatus.PENDING);
             persist(shareResourceRequest);
             addSkillsToResourceRequests(shareResourceRequest.id, shareResourceRequest.getSkillProficiencies());
