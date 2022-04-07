@@ -30,7 +30,7 @@ jobs:
 
       - name: Build Project
         env:
-          SKIP_TESTS: "true"
+          SKIP_TESTS: "false"
         run: make build-project
 
       - name: Login to DockerHub Registry
