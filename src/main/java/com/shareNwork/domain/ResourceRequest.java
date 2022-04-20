@@ -26,7 +26,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public class ResourceRequest extends PanacheEntity {
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = CascadeType.ALL)
     private Employee requester;
 
     @ManyToOne
