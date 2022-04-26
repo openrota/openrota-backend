@@ -1,21 +1,16 @@
 package com.shareNwork.repository;
 
 import com.shareNwork.domain.*;
-import com.shareNwork.domain.constants.InvitationStatus;
-import com.shareNwork.domain.constants.ResourceAvailabilityStatus;
-import com.shareNwork.domain.constants.ResourceRequestStatus;
-import com.shareNwork.domain.constants.SkillProficiencyLevel;
+import com.shareNwork.domain.constants.*;
 import com.shareNwork.domain.processEngine.Process;
 import io.quarkus.runtime.StartupEvent;
 import lombok.NoArgsConstructor;
-import org.slf4j.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -36,6 +31,15 @@ public class BootstrapRepo {
     @Transactional
     void onStart(@Observes StartupEvent startupEvent) {
 
+        Role role = new Role(RoleType.ADMIN, "Can view all screens and has access to all features of the application");
+        Role role1 = new Role(RoleType.REQUESTOR, "Can request resource and track statuses of their requests");
+        Role role2 = new Role(RoleType.RESOURCE, "They only have access to personalised screen containing their project information");
+        Role role3 = new Role(RoleType.MANAGER, "They only access to information of all associates and their schedule");
+        role.persist();
+        role1.persist();
+        role2.persist();
+        role3.persist();
+
         Skill skill1 = new Skill("react");
         Skill skill2 = new Skill("java");
         Skill skill3 = new Skill("html");
@@ -49,7 +53,8 @@ public class BootstrapRepo {
         Employee manager1 = new Employee("Imran", "khalidi", "RH21821", "ikhalidi@redhat.com", "Manager");
         SharedResource employee1 = new SharedResource("Rishi", "raj", "RISH323", "ranand@redhat.com", "engineer", "12", ResourceAvailabilityStatus.AVAILABLE);
         SharedResource employee2 = new SharedResource("Abhishek", "kumar", "ABHI323", "abkuma@redhat.com", "engineer", "23", ResourceAvailabilityStatus.UNAVAILABLE);
-
+        employee1.setRoles(Set.of(role, role2));
+        employee2.setRoles(Set.of(role2));
         this.sharedResourceRepository.persist(employee1);
         this.sharedResourceRepository.persist(employee2);
 
@@ -65,7 +70,7 @@ public class BootstrapRepo {
 
         AccessRequest accessRequest = new AccessRequest("ranand@redhat.com", InvitationStatus.PENDING, "Temporary web site building work");
         accessRequest.persist();
-        
+
         ResourceRequestSkillsProficiency resourceRequestSkillsProficiency = new ResourceRequestSkillsProficiency(SkillProficiencyLevel.ADVANCED);
         resourceRequestSkillsProficiency.setSkill(skill1);
         resourceRequestSkillsProficiency.setResourceRequest(resourceRequest);
