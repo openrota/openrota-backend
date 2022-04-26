@@ -13,7 +13,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @GraphQLApi
-public class SharedResource {
+public class SharedResourcesResource {
 
     private SharedResourceRepository sharedResourceRepository;
 

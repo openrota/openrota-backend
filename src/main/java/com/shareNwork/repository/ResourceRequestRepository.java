@@ -30,12 +30,9 @@ public class ResourceRequestRepository implements PanacheRepository<ResourceRequ
             shareResourceRequest.setCreatedAt(LocalDateTime.now());
             shareResourceRequest.setStatus(ResourceRequestStatus.PENDING);
             persist(shareResourceRequest);
-            addSkillsToResourceRequests(shareResourceRequest.id, shareResourceRequest.getSkillProficiencies());
-            return shareResourceRequest;
-        } else {
-            addSkillsToResourceRequests(shareResourceRequest.id, shareResourceRequest.getSkillProficiencies());
-            return em.merge(shareResourceRequest);
         }
+        addSkillsToResourceRequests(shareResourceRequest.id, shareResourceRequest.getSkillProficiencies());
+        return em.merge(shareResourceRequest);
     }
 
     @Transactional
