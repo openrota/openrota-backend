@@ -25,6 +25,7 @@ public class Invitation extends PanacheEntity {
     private InvitationStatus status;
     private String token;
     private LocalDateTime createdAt;
+    private String invitationLinkParams;
 
     @OneToOne
     private Role role;
