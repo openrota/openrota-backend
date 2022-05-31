@@ -27,7 +27,7 @@ public class ResourceRequestSkillsProficiency  extends PanacheEntity {
     @ManyToOne
     private Skill skill;
 
-    private SkillProficiencyLevel proficiencyLevel;
+    private SkillProficiencyLevel proficiencyLevel = SkillProficiencyLevel.BEGINNER;
 
     public ResourceRequestSkillsProficiency(SkillProficiencyLevel proficiencyLevel) {
         this.proficiencyLevel = proficiencyLevel;

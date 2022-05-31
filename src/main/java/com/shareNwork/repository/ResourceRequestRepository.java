@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class ResourceRequestRepository implements PanacheRepository<ResourceRequest> {
@@ -24,6 +25,10 @@ public class ResourceRequestRepository implements PanacheRepository<ResourceRequ
     @Inject
     EntityManager em;
 
+    @Transactional
+    public List<ResourceRequest> getSharedResourceByRequestor(long requestorId) {
+        return listAll().stream().filter(resourceRequest -> resourceRequest.getRequester().id.equals(requestorId)).collect(Collectors.toList());
+    }
     @Transactional
     public ResourceRequest updateOrCreate(ResourceRequest shareResourceRequest) throws ParseException {
         if (shareResourceRequest.id == null) {

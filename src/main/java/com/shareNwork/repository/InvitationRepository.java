@@ -1,9 +1,11 @@
 package com.shareNwork.repository;
 
+import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -12,9 +14,12 @@ import javax.transaction.Transactional;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import com.shareNwork.domain.Employee;
 import com.shareNwork.domain.Invitation;
 import com.shareNwork.domain.InvitationResponse;
+import com.shareNwork.domain.Role;
 import com.shareNwork.domain.constants.InvitationStatus;
+import com.shareNwork.domain.constants.RoleType;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.impl.TextCodec;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
@@ -33,6 +38,9 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
 
     @Inject
     SharedResourceRepository sharedResourceRepository;
+
+    @Inject
+    EmployeeRepository employeeRepository;
 
     @Inject
     @Location("sharedResourceInvitation")
@@ -110,7 +118,7 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
         invitation.setStatus(InvitationStatus.PENDING);
         invitation.persist();
 
-        invitationResponse.setToken(generateToken("email", invitation.getEmailId()));
+        invitationResponse.setToken(token);
         invitationResponse.setResponseStatus(Response.Status.OK.getStatusCode());
         sendEmail(token, invitation.getEmailId());
 
@@ -169,8 +177,9 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
                     String extractedEmailFromToken = (dataFromToken != null ? dataFromToken.substring(dataFromToken.indexOf(":") + 2, dataFromToken.indexOf(",") - 1) : "");
                     if (extractedEmailFromToken.equals(emailId)) {
                         invitation1.setStatus(InvitationStatus.COMPLETED);
+                        employeeRepository.createEmployeeWithRole(emailId, name, Set.of(invitation1.getRole()));
+//                        sharedResourceRepository.createSharedResourceAccount(name, emailId);
                         em.merge(invitation1);
-                        sharedResourceRepository.createSharedResourceAccount(name, emailId);
                         return (new InvitationResponse(Response.Status.OK.getStatusCode(), "Token verified succesfully, please complete your profile details"));
                     }
                     return (new InvitationResponse(Response.Status.BAD_REQUEST.getStatusCode(), "Invalid token, please ask your system admin to generate a new token for " + emailId));
@@ -181,4 +190,5 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
         }
         return (new InvitationResponse(Response.Status.NOT_FOUND.getStatusCode(), "No invitations found for email " + emailId));
     }
+
 }

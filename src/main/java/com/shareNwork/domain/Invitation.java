@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 
 @Entity
 @Data
@@ -24,4 +25,7 @@ public class Invitation extends PanacheEntity {
     private InvitationStatus status;
     private String token;
     private LocalDateTime createdAt;
+
+    @OneToOne
+    private Role role;
 }

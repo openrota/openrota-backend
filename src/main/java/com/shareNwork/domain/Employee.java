@@ -28,6 +28,12 @@ public class Employee extends PanacheEntity {
 
     private String designation;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "EmployeeRoles",
+            joinColumns = @JoinColumn(name = "employeeId", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "roleId", referencedColumnName = "id"))
+    private Set<Role> roles;
+
     public Employee(String firstName, String lastName, String employeeId, String emailId, String designation) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -35,12 +41,6 @@ public class Employee extends PanacheEntity {
         this.emailId = emailId;
         this.designation = designation;
     }
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "EmployeeRoles",
-            joinColumns = @JoinColumn(name = "employeeId", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "roleId", referencedColumnName = "id"))
-    private Set<Role> roles;
 
 }
 

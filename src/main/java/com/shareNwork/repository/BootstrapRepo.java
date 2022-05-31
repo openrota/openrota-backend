@@ -53,8 +53,9 @@ public class BootstrapRepo {
         Employee manager1 = new Employee("Imran", "khalidi", "RH21821", "ikhalidi@redhat.com", "Manager");
         SharedResource employee1 = new SharedResource("Rishi", "raj", "RISH323", "ranand@redhat.com", "engineer", "12", ResourceAvailabilityStatus.AVAILABLE);
         SharedResource employee2 = new SharedResource("Abhishek", "kumar", "ABHI323", "abkuma@redhat.com", "engineer", "23", ResourceAvailabilityStatus.UNAVAILABLE);
-        employee1.setRoles(Set.of(role, role2));
+        employee1.setRoles(Set.of(role));
         employee2.setRoles(Set.of(role2));
+        manager1.setRoles(Set.of(role3));
         this.sharedResourceRepository.persist(employee1);
         this.sharedResourceRepository.persist(employee2);
 
