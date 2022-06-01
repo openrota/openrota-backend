@@ -37,6 +37,10 @@ public class ResourceRequestRepository implements PanacheRepository<ResourceRequ
         if (shareResourceRequest.id == null) {
             shareResourceRequest.setCreatedAt(LocalDateTime.now());
             shareResourceRequest.setStatus(ResourceRequestStatus.PENDING);
+            Employee requestor = Employee.findById(shareResourceRequest.getRequester().id);
+            if (requestor != null) {
+                shareResourceRequest.setRequester(requestor);
+            }
             persist(shareResourceRequest);
         }
         addSkillsToResourceRequests(shareResourceRequest.id, shareResourceRequest.getSkillProficiencies());
