@@ -1,6 +1,11 @@
 package com.shareNwork.repository;
 
 import com.shareNwork.domain.*;
+import com.shareNwork.domain.constants.InvitationStatus;
+import com.shareNwork.domain.constants.ResourceAvailabilityStatus;
+import com.shareNwork.domain.constants.ResourceRequestStatus;
+import com.shareNwork.domain.constants.ProjectStatus;
+import com.shareNwork.domain.constants.SkillProficiencyLevel;
 import com.shareNwork.domain.constants.*;
 import com.shareNwork.domain.processEngine.Process;
 import io.quarkus.runtime.StartupEvent;
@@ -11,6 +16,9 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -68,6 +76,47 @@ public class BootstrapRepo {
         ResourceRequest resourceRequest2 = new ResourceRequest(manager1, "Integration", "Serverless workflow", "Documentation", LocalDate.now().toString(), LocalDate.now().toString(), ResourceRequestStatus.PENDING);
 //        resourceRequest2.setResource(employee1);
         resourceRequest2.persist();
+
+        ProjectFeedback pf = new ProjectFeedback("demonstrates great responsibility", LocalDateTime.now());
+        pf.persist();
+
+        ProjectFeedback pf1 = new ProjectFeedback("needs training", LocalDateTime.now());
+        pf1.persist();
+
+        Slot slot = new Slot("2022-05-11", "2022-05-20");
+        slot.persist();
+
+        Project project = new Project("check SEO", "Managed Services", resourceRequest);
+        project.setProjectManager(manager1);
+        project.setEmployee(employee1);
+        project.setSlot(slot);
+        project.setStatus(ProjectStatus.PENDING);
+        project.persist();
+
+        Project project1 = new Project("xyz","Application Services", resourceRequest2);
+        project1.setProjectManager(manager1);
+        project1.setEmployee(employee1);
+        project1.setSlot(slot);
+        project1.setStatus(ProjectStatus.PENDING);
+        project1.persist();
+
+        ProjectSkillsProficiency projectSkillsProficiency = new ProjectSkillsProficiency(SkillProficiencyLevel.ADVANCED);
+        projectSkillsProficiency.setSkill(skill1);
+        projectSkillsProficiency.setProject(project);
+        projectSkillsProficiency.persist();
+
+        ProjectSkillsProficiency projectSkillsProficiency1 = new ProjectSkillsProficiency(SkillProficiencyLevel.BEGINNER);
+        projectSkillsProficiency1.setSkill(skill2);
+        projectSkillsProficiency1.setProject(project);
+        projectSkillsProficiency1.persist();
+
+        List<ProjectSkillsProficiency> projectSkillsProficiencyList= new ArrayList<>();
+        projectSkillsProficiencyList.add(projectSkillsProficiency);
+        projectSkillsProficiencyList.add(projectSkillsProficiency1);
+
+        List<ProjectSkillsProficiency> projectSkillsProficiencyList1= new ArrayList<>();
+        projectSkillsProficiencyList1.add(projectSkillsProficiency);
+        projectSkillsProficiencyList1.add(projectSkillsProficiency1);
 
         AccessRequest accessRequest = new AccessRequest("ranand@redhat.com", InvitationStatus.PENDING, "Temporary web site building work");
         accessRequest.persist();

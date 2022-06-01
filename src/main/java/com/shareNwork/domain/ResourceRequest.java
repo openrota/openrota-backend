@@ -4,11 +4,7 @@ import com.shareNwork.domain.constants.ResourceRequestStatus;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import lombok.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -29,7 +25,7 @@ public class ResourceRequest extends PanacheEntity {
     @ManyToOne
     private SharedResource resource;
 
-    private String pillar;
+    private String businessUnit;
 
     private String project;
 
@@ -48,9 +44,9 @@ public class ResourceRequest extends PanacheEntity {
     @OneToMany(mappedBy = "resourceRequest", fetch = FetchType.LAZY)
     List<ResourceRequestSkillsProficiency> skillProficiencies;
 
-    public ResourceRequest(Employee requester, String pillar, String project, String taskDetails, String startDate, String endDate, ResourceRequestStatus status) {
+    public ResourceRequest(Employee requester, String businessUnit, String project, String taskDetails, String startDate, String endDate, ResourceRequestStatus status) {
         this.requester = requester;
-        this.pillar = pillar;
+        this.businessUnit = businessUnit;
         this.project = project;
         this.taskDetails = taskDetails;
         this.startDate = startDate;

@@ -1,16 +1,26 @@
 package com.shareNwork.domain;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 import java.time.LocalDate;
 
 @Entity
 @Data
-public class Slot extends BaseEntity {
+@NoArgsConstructor
+public class Slot extends PanacheEntity {
 
-    private LocalDate startDate;
+    private String startDate;
 
-    private LocalDate endDate;
+    private String endDate;
+
+    public Slot(String startDate, String endDate){
+        this.startDate=startDate;
+        this.endDate=endDate;
+    }
 
 }

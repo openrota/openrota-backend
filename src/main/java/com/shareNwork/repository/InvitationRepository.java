@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -17,6 +19,7 @@ import javax.ws.rs.core.Response;
 import com.shareNwork.domain.Employee;
 import com.shareNwork.domain.Invitation;
 import com.shareNwork.domain.InvitationResponse;
+import com.shareNwork.domain.QueryParams;
 import com.shareNwork.domain.Role;
 import com.shareNwork.domain.constants.InvitationStatus;
 import com.shareNwork.domain.constants.RoleType;
@@ -26,12 +29,18 @@ import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.mailer.MailTemplate;
 import io.quarkus.qute.Location;
 import org.apache.commons.lang3.time.DateUtils;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.jboss.logging.Logger;
 
 import static io.jsonwebtoken.SignatureAlgorithm.HS256;
 
 @ApplicationScoped
 
 public class InvitationRepository implements PanacheRepository<Invitation> {
+
+    private static final Logger LOGGER = Logger.getLogger(InvitationRepository.class);
+    @ConfigProperty(name = "openrota.ui.url")
+    private String UI_URL;
 
     @Inject
     EntityManager em;
@@ -84,14 +93,16 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
                     .compact();
 
             invitation.setStatus(InvitationStatus.PENDING);
+            final String inviteURL = getInvitationParams(token, invitation.getEmailId());
+            invitation.setInvitationLinkParams(inviteURL);
             persist(invitation);
             invitationResponse.setToken(token);
             invitationResponse.setResponseStatus(Response.Status.OK.getStatusCode());
-            String inviteURL = "https://prod.foo.redhat.com:1337/?token=" + token + "&email=" + invitation.getEmailId();
+
             sharedResourceInvitation.to(invitation.getEmailId())
                     .subject("[Action Required] Invitation from OpenRota")
                     .data("invitationLink", inviteURL)
-                    .send().subscribe().with(t -> System.out.println("Mail sent to " + invitation.getEmailId()));
+                    .send().subscribe().with(t -> LOGGER.info("Mail sent to " + invitation.getEmailId()));
             responses.add(invitationResponse);
         }
         return responses;
@@ -100,22 +111,28 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
     @Transactional
     public InvitationResponse createInvitation(Invitation invitation) {
         InvitationResponse invitationResponse = new InvitationResponse();
+        String token = null;
 
         // check if this email ID exist
         for (Invitation invitation1 : listAll()) {
-            if (invitation1.getEmailId().equals(invitation.getEmailId())) {
-                invitationResponse.setResponseStatus(Response.Status.CONFLICT.getStatusCode());
-                invitationResponse.setToken(null);
-                return invitationResponse;
-            }
+
+                if (invitation1.getEmailId().equals(invitation.getEmailId())) {
+                    invitationResponse.setResponseStatus(Response.Status.CONFLICT.getStatusCode());
+                    invitationResponse.setToken(null);
+                    return invitationResponse;
+                }
         }
 
-        final String token = generateToken("email", invitation.getEmailId());
+        if(isValidEmail(invitation.getEmailId()))
+        {
+            token = generateToken("email", invitation.getEmailId());
+        }
 
         // save the invitation
         invitation.setCreatedAt(LocalDateTime.now());
         invitation.setToken(token);
         invitation.setStatus(InvitationStatus.PENDING);
+        invitation.setInvitationLinkParams(getInvitationParams(token, invitation.getEmailId()));
         invitation.persist();
 
         invitationResponse.setToken(token);
@@ -137,6 +154,7 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
             invitation.setCreatedAt(LocalDateTime.now());
             invitation.setToken(token);
             invitation.setStatus(InvitationStatus.PENDING);
+            invitation.setInvitationLinkParams(getInvitationParams(token, invitation.getEmailId()));
             sendEmail(token, invitation.getEmailId());
             invitation.persist();
         } else {
@@ -158,11 +176,29 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
     }
 
     public void sendEmail(String token, String email){
-        String inviteURL = "https://prod.foo.redhat.com:1337/?token=" + token + "&email=" + email;
         sharedResourceInvitation.to(email)
                 .subject("[Action Required] Invitation from OpenRota")
-                .data("invitationLink", inviteURL)
-                .send().subscribe().with(t -> System.out.println("Mail sent to " + email));
+                .data("invitationLink", getInvitationParams(token, email))
+                .send().subscribe().with(t -> LOGGER.info("Mail sent to " + email));
+    }
+
+    private String getInvitationParams(final String token, final String email) {
+        String queryParams = new QueryParams()
+                .addParam("token", token)
+                .addParam("emailId", email)
+                .asString();
+        return UI_URL + "?" + queryParams;
+    }
+
+    private static final String EMAIL_PATTERN =
+            "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
+                    + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
+
+    private static final Pattern pattern = Pattern.compile(EMAIL_PATTERN);
+
+    public static boolean isValidEmail(final String email) {
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 
     @Transactional
