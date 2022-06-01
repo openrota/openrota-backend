@@ -1,10 +1,10 @@
 package com.shareNwork.repository;
 
-import com.shareNwork.domain.ResourceRequest;
-import com.shareNwork.domain.ResourceRequestSkillsProficiency;
-import com.shareNwork.domain.SharedResource;
+import com.shareNwork.domain.*;
+import com.shareNwork.domain.constants.ProjectStatus;
 import com.shareNwork.domain.constants.ResourceRequestStatus;
 import com.shareNwork.domain.constants.RowAction;
+import com.shareNwork.domain.constants.SkillProficiencyLevel;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -13,10 +13,10 @@ import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.ws.rs.NotFoundException;
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @ApplicationScoped
 public class ResourceRequestRepository implements PanacheRepository<ResourceRequest> {
@@ -46,6 +46,7 @@ public class ResourceRequestRepository implements PanacheRepository<ResourceRequ
                     sharedResource.ifPresent(sharedResource1 -> request.setResource(sharedResource1));
                 }
                 request.setStatus(ResourceRequestStatus.COMPLETED);
+                convertResourceRequestToProject(request);
             } else if (actionName.equals(RowAction.REJECT)) {
                 // send an email here
                 request.setStatus(ResourceRequestStatus.CANCELLED);
@@ -107,5 +108,29 @@ public class ResourceRequestRepository implements PanacheRepository<ResourceRequ
         }
         employeeSkillProficiency1.persist();
         return employeeSkillProficiency1;
+    }
+
+    public void convertResourceRequestToProject(ResourceRequest resourceRequest){
+        Project project = new Project();
+        project.setProjectName(resourceRequest.getProject());
+        project.setCreatedAt(LocalDateTime.now());
+        project.setResourcerequest(resourceRequest);
+        project.setEmployee(resourceRequest.getResource());
+        project.setStatus(ProjectStatus.INPROGRESS);
+        project.setBusinessUnit(resourceRequest.getBusinessUnit());
+        String startDate = resourceRequest.getStartDate();
+        String endDate = resourceRequest.getEndDate();
+        Slot projectSlot = new Slot(startDate, endDate);
+        projectSlot.persist();
+        project.setSlot(projectSlot);
+        project.setProjectManager(resourceRequest.getRequester());
+        for(ResourceRequestSkillsProficiency skillProficiency : resourceRequest.getSkillProficiencies()){
+            Skill skill= skillProficiency.getSkill();
+            SkillProficiencyLevel skillProficiencyLevel = skillProficiency.getProficiencyLevel();
+            ProjectSkillsProficiency projectSkillsProficiency = new ProjectSkillsProficiency(skill, skillProficiencyLevel);
+            projectSkillsProficiency.persist();
+            projectSkillsProficiency.setProject(project);
+        }
+        project.persist();
     }
 }

@@ -53,7 +53,7 @@ public class RoasterService {
     protected void save(Roaster roaster) {
         for (Project project : roaster.getProjectList()) {
             // TODO this is awfully naive: optimistic locking causes issues if called by the SolverManager
-            Project projectResult = projectRepository.findById(project.getId());
+            Project projectResult = projectRepository.findById(project.id);
             projectResult.setEmployee(project.getEmployee());
         }
     }

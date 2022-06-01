@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -92,17 +94,22 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
     @Transactional
     public InvitationResponse createInvitation(Invitation invitation) {
         InvitationResponse invitationResponse = new InvitationResponse();
+        String token = null;
 
         // check if this email ID exist
         for (Invitation invitation1 : listAll()) {
-            if (invitation1.getEmailId().equals(invitation.getEmailId())) {
-                invitationResponse.setResponseStatus(Response.Status.CONFLICT.getStatusCode());
-                invitationResponse.setToken(null);
-                return invitationResponse;
-            }
+
+                if (invitation1.getEmailId().equals(invitation.getEmailId())) {
+                    invitationResponse.setResponseStatus(Response.Status.CONFLICT.getStatusCode());
+                    invitationResponse.setToken(null);
+                    return invitationResponse;
+                }
         }
 
-        final String token = generateToken("email", invitation.getEmailId());
+        if(isValidEmail(invitation.getEmailId()))
+        {
+            token = generateToken("email", invitation.getEmailId());
+        }
 
         // save the invitation
         invitation.setCreatedAt(LocalDateTime.now());
@@ -155,6 +162,17 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
                 .subject("[Action Required] Invitation from OpenRota")
                 .data("invitationLink", inviteURL)
                 .send().subscribe().with(t -> System.out.println("Mail sent to " + email));
+    }
+
+    private static final String EMAIL_PATTERN =
+            "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
+                    + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
+
+    private static final Pattern pattern = Pattern.compile(EMAIL_PATTERN);
+
+    public static boolean isValidEmail(final String email) {
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 
     @Transactional
