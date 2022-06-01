@@ -1,27 +1,30 @@
 package com.shareNwork.repository;
 
 import com.shareNwork.domain.AccessRequest;
-import com.shareNwork.domain.Employee;
-import com.shareNwork.domain.ResourceRequest;
 import com.shareNwork.domain.constants.InvitationStatus;
-import com.shareNwork.domain.constants.ResourceRequestStatus;
+import com.shareNwork.domain.constants.RoleType;
 import com.shareNwork.domain.constants.RowAction;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.swing.text.html.parser.Entity;
 import javax.transaction.Transactional;
 import javax.ws.rs.NotFoundException;
 import java.text.ParseException;
+import java.util.Set;
 
 @ApplicationScoped
-
 public class AccessRequestRepository implements PanacheRepository<AccessRequest> {
 
     @Inject
     EntityManager em;
+
+    @Inject
+    EmployeeRepository employeeRepository;
+
+    @Inject
+    RoleRepository roleRepository;
 
     @Transactional
     public AccessRequest handleActions(RowAction actionName, AccessRequest accessRequest) throws ParseException {
@@ -30,6 +33,7 @@ public class AccessRequestRepository implements PanacheRepository<AccessRequest>
             if (actionName.equals(RowAction.APPROVE)) {
                 // send an email here
                 request.setStatus(InvitationStatus.COMPLETED);
+                employeeRepository.createEmployeeWithRole(request.getEmailId(), "", roleRepository.getRolesbyRoleTypes(Set.of(RoleType.REQUESTOR)));
             } else if (actionName.equals(RowAction.REJECT)) {
                 // send an email here
                 request.setStatus(InvitationStatus.REJECTED);

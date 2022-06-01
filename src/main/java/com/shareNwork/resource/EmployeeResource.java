@@ -17,8 +17,13 @@ public class EmployeeResource {
     @Query("employee")
     @Description("Get all Employees")
     public List<Employee> findAll() {
-
         return this.employeeRepository.findAll().list();
+    }
+
+    @Query("employeeByEmailId")
+    @Description("Get an employee by emailId")
+    public com.shareNwork.domain.Employee getEmployeeByEmailId(@Name("emailId") String emailId) {
+        return this.employeeRepository.findByEmailId(emailId);
     }
 
     @Query("employeesWithFilter")

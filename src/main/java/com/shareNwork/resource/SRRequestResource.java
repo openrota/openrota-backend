@@ -30,6 +30,13 @@ public class SRRequestResource {
         return resourceRequestRepository.listAll();
     }
 
+    @Query("sharedResourceRequestByRequestorId")
+    @Description("Get all resources request by requestor")
+    @Transactional
+    public List<ResourceRequest> getAllSharedResourceRequestbyRequestor(long id) {
+        return resourceRequestRepository.getSharedResourceByRequestor(id);
+    }
+
     @Query("getSkillsByRequestId")
     @Description("Get required skills of request Id")
     @Transactional

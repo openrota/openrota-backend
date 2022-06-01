@@ -1,6 +1,8 @@
 package com.shareNwork.repository;
 
 import com.shareNwork.domain.Employee;
+import com.shareNwork.domain.Role;
+import com.shareNwork.domain.SharedResource;
 import com.shareNwork.domain.filters.EmployeeFilter;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 
@@ -14,6 +16,7 @@ import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.text.ParseException;
 import java.util.List;
+import java.util.Set;
 
 @ApplicationScoped
 public class EmployeeRepository implements PanacheRepository<Employee> {
@@ -23,9 +26,13 @@ public class EmployeeRepository implements PanacheRepository<Employee> {
 
     @Transactional
     public Employee create(Employee employee) throws ParseException {
-
         em.persist(employee);
         return employee;
+    }
+
+    @Transactional
+    public Employee findByEmailId(String emailId) {
+        return find("emailId", emailId).firstResult();
     }
 
     @Transactional
@@ -49,5 +56,15 @@ public class EmployeeRepository implements PanacheRepository<Employee> {
 
         return em.createQuery(criteriaQuery).getResultList();
     }
+
+    @Transactional
+    public void createEmployeeWithRole(String email, String name, Set<Role> role) {
+        Employee employee = new Employee();
+        employee.setFirstName(name);
+        employee.setEmailId(email);
+        employee.setRoles(role);
+        employee.persist();
+    }
+
 
 }

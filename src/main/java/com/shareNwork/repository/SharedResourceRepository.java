@@ -2,8 +2,10 @@ package com.shareNwork.repository;
 
 import com.shareNwork.domain.Employee;
 import com.shareNwork.domain.EmployeeSkillProficiency;
+import com.shareNwork.domain.Role;
 import com.shareNwork.domain.SharedResource;
 import com.shareNwork.domain.constants.ResourceAvailabilityStatus;
+import com.shareNwork.domain.constants.RoleType;
 import com.shareNwork.domain.filters.EmployeeFilter;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 
@@ -18,12 +20,16 @@ import javax.transaction.Transactional;
 import javax.ws.rs.NotFoundException;
 import java.text.ParseException;
 import java.util.List;
+import java.util.Set;
 
 @ApplicationScoped
 public class SharedResourceRepository implements PanacheRepository<SharedResource> {
 
     @Inject
     EntityManager em;
+
+    @Inject
+    RoleRepository roleRepository;
 
     @Transactional
     public SharedResource updateOrCreate(SharedResource shareResource) throws ParseException {
@@ -46,6 +52,7 @@ public class SharedResourceRepository implements PanacheRepository<SharedResourc
         sharedResource.setEmailId(emailId);
         sharedResource.setStatus(ResourceAvailabilityStatus.AVAILABLE);
         sharedResource.setDesignation(" Associate software Engineer");
+        sharedResource.setRoles(roleRepository.getRolesbyRoleTypes(Set.of(RoleType.RESOURCE)));
         sharedResource.persist();
         return sharedResource;
     }
