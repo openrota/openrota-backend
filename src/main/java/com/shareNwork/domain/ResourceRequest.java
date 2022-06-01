@@ -19,7 +19,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public class ResourceRequest extends PanacheEntity {
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Employee requester;
 
     @ManyToOne
