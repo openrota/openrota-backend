@@ -51,12 +51,12 @@ public class BootstrapRepo {
         this.skillRepository.persist(skill4);
 
         Employee manager1 = new Employee("Imran", "khalidi", "RH21821", "ikhalidi@redhat.com", "Manager");
-        SharedResource employee1 = new SharedResource("Rishi", "raj", "RISH323", "ranand@redhat.com", "engineer", "12", ResourceAvailabilityStatus.AVAILABLE);
+//        SharedResource employee1 = new SharedResource("Rishi", "raj", "RISH323", "ranand@redhat.com", "engineer", "12", ResourceAvailabilityStatus.AVAILABLE);
         SharedResource employee2 = new SharedResource("Abhishek", "kumar", "ABHI323", "abkuma@redhat.com", "engineer", "23", ResourceAvailabilityStatus.UNAVAILABLE);
-        employee1.setRoles(Set.of(role));
+//        employee1.setRoles(Set.of(role));
         employee2.setRoles(Set.of(role2));
         manager1.setRoles(Set.of(role3));
-        this.sharedResourceRepository.persist(employee1);
+//        this.sharedResourceRepository.persist(employee1);
         this.sharedResourceRepository.persist(employee2);
 
         manager1.persist();
@@ -77,10 +77,10 @@ public class BootstrapRepo {
         resourceRequestSkillsProficiency.setResourceRequest(resourceRequest);
         resourceRequestSkillsProficiency.persist();
 
-        EmployeeSkillProficiency employeeSkillProficiency = new EmployeeSkillProficiency(SkillProficiencyLevel.ADVANCED);
-        employeeSkillProficiency.setSkill(skill1);
-        employeeSkillProficiency.setEmployee(employee1);
-        employeeSkillProficiency.persist();
+//        EmployeeSkillProficiency employeeSkillProficiency = new EmployeeSkillProficiency(SkillProficiencyLevel.ADVANCED);
+//        employeeSkillProficiency.setSkill(skill1);
+//        employeeSkillProficiency.setEmployee(employee1);
+//        employeeSkillProficiency.persist();
 
         EmployeeSkillProficiency employeeSkillProficiency2 = new EmployeeSkillProficiency(SkillProficiencyLevel.BEGINNER);
         employeeSkillProficiency2.setSkill(skill2);
