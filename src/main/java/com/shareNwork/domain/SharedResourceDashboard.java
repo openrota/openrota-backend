@@ -25,10 +25,10 @@ public class SharedResourceDashboard {
         AtomicInteger unavailable = new AtomicInteger();
         List<SharedResource> sharedResource = SharedResource.listAll();
         sharedResource.parallelStream().forEach(sr -> {
-            if (sr.getStatus().equals(ResourceAvailabilityStatus.AVAILABLE)) {
+            if (ResourceAvailabilityStatus.AVAILABLE.equals(sr.getStatus())) {
                 available.getAndIncrement();
             }
-            if (sr.getStatus().equals(ResourceAvailabilityStatus.UNAVAILABLE)) {
+            if (ResourceAvailabilityStatus.UNAVAILABLE.equals(sr.getStatus())) {
                 unavailable.getAndIncrement();
             }
         });
