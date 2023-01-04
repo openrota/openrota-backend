@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class AccessRequest extends PanacheEntity {
-    @Column(unique = true)
+    @Column
     private String emailId;
 
     @Column

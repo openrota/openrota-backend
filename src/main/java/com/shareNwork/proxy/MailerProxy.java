@@ -13,7 +13,7 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 @Path("/mailer")
 @Produces(MediaType.APPLICATION_JSON)
-@RegisterRestClient(baseUri = "http://localhost:8082")
+@RegisterRestClient
 public interface MailerProxy {
 
     @POST

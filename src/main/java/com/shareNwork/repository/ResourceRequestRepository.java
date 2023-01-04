@@ -74,15 +74,18 @@ public class ResourceRequestRepository implements PanacheRepository<ResourceRequ
                 }
                 request.setStatus(ResourceRequestStatus.COMPLETED);
                 convertResourceRequestToProject(request);
+                mailerProxy.sendEmail(new EmailData(EmailType.RESOURCE_REQUEST_STATUS.value(),
+                                                    request.getRequester().getEmailId(),
+                                                    Map.of("approved", String.valueOf(actionName.equals(RowAction.APPROVE)),
+                                                           "resourceName", request.getResource().getEmailId())));
             } else if (actionName.equals(RowAction.REJECT)) {
                 // send an email here
                 request.setStatus(ResourceRequestStatus.CANCELLED);
+                mailerProxy.sendEmail(new EmailData(EmailType.RESOURCE_REQUEST_STATUS.value(),
+                                                    request.getRequester().getEmailId(),
+                                                    Map.of("approved", String.valueOf(actionName.equals(RowAction.APPROVE)))));
             }
             em.merge(request);
-            mailerProxy.sendEmail(new EmailData(EmailType.RESOURCE_REQUEST_STATUS.value(),
-                                                request.getRequester().getEmailId(),
-                                                Map.of("approved", String.valueOf(actionName.equals(RowAction.APPROVE)),
-                                                       "resourceName", request.getResource().getEmailId())));
         } else {
             throw new NotFoundException();
         }

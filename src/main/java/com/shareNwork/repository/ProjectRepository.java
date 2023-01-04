@@ -1,11 +1,16 @@
 package com.shareNwork.repository;
 
+import com.shareNwork.domain.EmailData;
 import com.shareNwork.domain.Project;
 import com.shareNwork.domain.ProjectFeedback;
 import com.shareNwork.domain.ProjectSkillsProficiency;
+import com.shareNwork.domain.constants.EmailType;
 import com.shareNwork.domain.constants.ProjectStatus;
 import com.shareNwork.domain.constants.ResourceRequestStatus;
+import com.shareNwork.proxy.MailerProxy;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import io.quarkus.mailer.Mail;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -16,12 +21,16 @@ import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @ApplicationScoped
 public class ProjectRepository implements PanacheRepository<Project> {
 
     @Inject
     EntityManager em;
+
+    @RestClient
+    MailerProxy mailerProxy;
 
     @Transactional
     public Project createOrUpdateProject(Project project) throws ParseException {
@@ -109,6 +118,10 @@ public class ProjectRepository implements PanacheRepository<Project> {
             projectFeedback.setFeedback(comments);
             projectFeedback.persist();
             em.merge(project);
+            mailerProxy.sendEmail(EmailData.builder()
+                                          .emailType(EmailType.PROJECT_COMPLETED.value())
+                                          .mailTo(project.getProjectManager().getEmailId())
+                                          .emailTemplateVariables(Map.of("projectId", String.valueOf(projectId))).build());
         }
         else {
             throw new NotFoundException();
