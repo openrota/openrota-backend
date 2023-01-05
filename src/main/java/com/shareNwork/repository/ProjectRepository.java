@@ -30,7 +30,7 @@ public class ProjectRepository implements PanacheRepository<Project> {
             project.setStatus(ProjectStatus.PENDING);
             persist(project);
         }
-        addSkillsToProject(project.id, project.getSkillsProficiencies());
+//        addSkillsToProject(project.id, project.getSkillsProficiencies());
         return em.merge(project);
     }
 
@@ -90,10 +90,10 @@ public class ProjectRepository implements PanacheRepository<Project> {
     @Transactional
     public Project getProjectByProjectId(long id) {
         Project project = findById(id);
-        if (project != null) {
-            List<ProjectSkillsProficiency> projectSkillsProficiencies = getSkillsByProjectId(id);
-            project.setSkillsProficiencies(projectSkillsProficiencies);
-        }
+//        if (project != null) {
+//            List<ProjectSkillsProficiency> projectSkillsProficiencies = getSkillsByProjectId(id);
+//            project.setSkillsProficiencies(projectSkillsProficiencies);
+//        }
         return project;
     }
 

@@ -10,10 +10,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
-
 @Entity
 @Data
-@NoArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
 @EqualsAndHashCode(callSuper = false)
 public class Employee extends PanacheEntity {
@@ -33,7 +31,8 @@ public class Employee extends PanacheEntity {
             joinColumns = @JoinColumn(name = "employeeId", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "roleId", referencedColumnName = "id"))
     private Set<Role> roles;
-
+    public Employee() {
+    }
     public Employee(String firstName, String lastName, String employeeId, String emailId, String designation) {
         this.firstName = firstName;
         this.lastName = lastName;

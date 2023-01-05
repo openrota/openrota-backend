@@ -12,14 +12,9 @@ import java.util.Set;
 
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @Data
 public class Skill extends BaseEntity {
-
-    @OneToMany(mappedBy = "skill")
-    Set<EmployeeSkillProficiency> skillProficiencies;
-
     private String name;
 
     public Skill(String name) {

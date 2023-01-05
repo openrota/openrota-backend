@@ -12,22 +12,21 @@ import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftL
 import java.util.List;
 
 @Data
-@NoArgsConstructor
 @PlanningSolution
 public class Roaster extends BaseEntity {
 
     @ProblemFactCollectionProperty
     @ValueRangeProvider(id = "employeeRange")
-    private List<Employee> employeeList;
+    private List<SharedResource> employeeList;
 
     @PlanningEntityCollectionProperty
-    private List<Project> projectList;
+    private List<ResourceRequest> resourceRequests;
 
     @PlanningScore
     private HardMediumSoftLongScore score = null;
-
-    public Roaster(List<Employee> employeeList, List<Project> projectList) {
+    public Roaster() {}
+    public Roaster(List<SharedResource> employeeList, List<ResourceRequest> resourceRequests) {
         this.employeeList = employeeList;
-        this.projectList = projectList;
+        this.resourceRequests = resourceRequests;
     }
 }

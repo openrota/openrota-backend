@@ -5,6 +5,7 @@ import com.shareNwork.domain.constants.ProjectStatus;
 import com.shareNwork.domain.constants.ResourceRequestStatus;
 import com.shareNwork.domain.constants.RowAction;
 import com.shareNwork.domain.constants.SkillProficiencyLevel;
+import com.shareNwork.rest.roaster.RoasterService;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -28,6 +29,9 @@ public class ResourceRequestRepository implements PanacheRepository<ResourceRequ
     @Inject
     EntityManager em;
 
+    @Inject
+    RoasterService roasterService;
+
     @Transactional
     public List<ResourceRequest> getSharedResourceByRequestor(long requestorId) {
         return listAll().stream().filter(resourceRequest -> resourceRequest.getRequester().id.equals(requestorId)).collect(Collectors.toList());
@@ -42,8 +46,10 @@ public class ResourceRequestRepository implements PanacheRepository<ResourceRequ
                 shareResourceRequest.setRequester(requestor);
             }
             persist(shareResourceRequest);
+            roasterService.solveRoster(12);
+
         }
-        addSkillsToResourceRequests(shareResourceRequest.id, shareResourceRequest.getSkillProficiencies());
+//        addSkillsToResourceRequests(shareResourceRequest.id, shareResourceRequest.getSkillProficiencies());
         return em.merge(shareResourceRequest);
     }
 
@@ -136,13 +142,13 @@ public class ResourceRequestRepository implements PanacheRepository<ResourceRequ
         projectSlot.persist();
         project.setSlot(projectSlot);
         project.setProjectManager(resourceRequest.getRequester());
-        for(ResourceRequestSkillsProficiency skillProficiency : resourceRequest.getSkillProficiencies()){
-            Skill skill= skillProficiency.getSkill();
-            SkillProficiencyLevel skillProficiencyLevel = skillProficiency.getProficiencyLevel();
-            ProjectSkillsProficiency projectSkillsProficiency = new ProjectSkillsProficiency(skill, skillProficiencyLevel);
-            projectSkillsProficiency.persist();
-            projectSkillsProficiency.setProject(project);
-        }
+//        for(ResourceRequestSkillsProficiency skillProficiency : resourceRequest.getSkillProficiencies()){
+//            Skill skill= skillProficiency.getSkill();
+//            SkillProficiencyLevel skillProficiencyLevel = skillProficiency.getProficiencyLevel();
+//            ProjectSkillsProficiency projectSkillsProficiency = new ProjectSkillsProficiency(skill, skillProficiencyLevel);
+//            projectSkillsProficiency.persist();
+//            projectSkillsProficiency.setProject(project);
+//        }
         project.persist();
     }
 }

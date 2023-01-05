@@ -35,12 +35,12 @@ public class SharedResourceRepository implements PanacheRepository<SharedResourc
     public SharedResource updateOrCreate(SharedResource shareResource) throws ParseException {
         if (shareResource.id == null) {
             persist(shareResource);
-            if(shareResource.getSkillProficiencies() != null) {
-                addSkillsToEmployee(shareResource.id, shareResource.getSkillProficiencies());
-            }
+//            if(shareResource.getSkillProficiencies() != null) {
+//                addSkillsToEmployee(shareResource.id, shareResource.getSkillProficiencies());
+//            }
             return shareResource;
         } else {
-            addSkillsToEmployee(shareResource.id, shareResource.getSkillProficiencies());
+//            addSkillsToEmployee(shareResource.id, shareResource.getSkillProficiencies());
             return em.merge(shareResource);
         }
     }

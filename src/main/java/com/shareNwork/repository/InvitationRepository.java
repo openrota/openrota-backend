@@ -123,8 +123,7 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
                 }
         }
 
-        if(isValidEmail(invitation.getEmailId()))
-        {
+        if(isValidEmail(invitation.getEmailId())) {
             token = generateToken("email", invitation.getEmailId());
         }
 
@@ -137,7 +136,8 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
 
         invitationResponse.setToken(token);
         invitationResponse.setResponseStatus(Response.Status.OK.getStatusCode());
-        sendEmail(token, invitation.getEmailId());
+        Role role = Role.findById(invitation.getRole().id);
+        sendEmail(token, invitation.getEmailId(), role.getRoleName().name());
 
         return invitationResponse;
     }
@@ -155,7 +155,7 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
             invitation.setToken(token);
             invitation.setStatus(InvitationStatus.PENDING);
             invitation.setInvitationLinkParams(getInvitationParams(token, invitation.getEmailId()));
-            sendEmail(token, invitation.getEmailId());
+            sendEmail(token, invitation.getEmailId(), invitation.getRole().getRoleName().name());
             invitation.persist();
         } else {
             throw new WebApplicationException("Invitation not found");
@@ -175,10 +175,11 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
                 .compact();
     }
 
-    public void sendEmail(String token, String email){
+    public void sendEmail(String token, String email, String role){
         sharedResourceInvitation.to(email)
                 .subject("[Action Required] Invitation from OpenRota")
                 .data("invitationLink", getInvitationParams(token, email))
+                .data("role", role)
                 .send().subscribe().with(t -> LOGGER.info("Mail sent to " + email));
     }
 

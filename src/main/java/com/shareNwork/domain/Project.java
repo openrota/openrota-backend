@@ -17,8 +17,6 @@ import java.util.Set;
 
 @Entity
 @Data
-@NoArgsConstructor
-@PlanningEntity
 public class Project extends PanacheEntity {
 
     @NotNull
@@ -41,14 +39,19 @@ public class Project extends PanacheEntity {
     private LocalDateTime createdAt;
 
     @ManyToOne
-    @PlanningVariable(valueRangeProviderRefs = "employeeRange", nullable = true)
-    private SharedResource employee = null;
+    SharedResource employee;
 
+//    @Getter
+//    @Setter
+//    @OneToMany(mappedBy = "project", cascade= CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<ProjectSkillsProficiency> skillsProficiencies;
+
+    @ElementCollection(fetch = FetchType.EAGER)
     @Getter
     @Setter
-    @OneToMany(mappedBy = "project", cascade= CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ProjectSkillsProficiency> skillsProficiencies;
-
+    Set<String> skillSet;
+    public Project() {
+    }
     public Project(String projectName, String businessUnit, ResourceRequest resourcerequest) {
         this.projectName=projectName;
         this.businessUnit=businessUnit;
@@ -56,7 +59,4 @@ public class Project extends PanacheEntity {
 //        this.createdAt=createdAt;
     }
 
-    public boolean hasRequiredSkills() {
-        return employee.getSkillProficiencies().containsAll(skillsProficiencies);
-    }
 }
