@@ -1,12 +1,15 @@
 package com.shareNwork.repository;
 
 import com.shareNwork.domain.*;
+import com.shareNwork.domain.constants.EmailType;
 import com.shareNwork.domain.constants.ProjectStatus;
 import com.shareNwork.domain.constants.ResourceRequestStatus;
 import com.shareNwork.domain.constants.RowAction;
 import com.shareNwork.domain.constants.SkillProficiencyLevel;
 import com.shareNwork.rest.roaster.RoasterService;
+import com.shareNwork.proxy.MailerProxy;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -32,6 +35,9 @@ public class ResourceRequestRepository implements PanacheRepository<ResourceRequ
     @Inject
     RoasterService roasterService;
 
+    @RestClient
+    MailerProxy mailerProxy;
+
     @Transactional
     public List<ResourceRequest> getSharedResourceByRequestor(long requestorId) {
         return listAll().stream().filter(resourceRequest -> resourceRequest.getRequester().id.equals(requestorId)).collect(Collectors.toList());
@@ -49,7 +55,10 @@ public class ResourceRequestRepository implements PanacheRepository<ResourceRequ
             roasterService.solveRoster(12);
 
         }
-//        addSkillsToResourceRequests(shareResourceRequest.id, shareResourceRequest.getSkillProficiencies());
+        mailerProxy.sendEmail(new EmailData(EmailType.NEW_RESOURCE_REQ.value(),
+                                            shareResourceRequest.getRequester().getEmailId(),
+                                            Map.of("requestId", String.valueOf(shareResourceRequest.id),
+                                                   "projectName", shareResourceRequest.getProject())));
         return em.merge(shareResourceRequest);
     }
 
@@ -65,9 +74,16 @@ public class ResourceRequestRepository implements PanacheRepository<ResourceRequ
                 }
                 request.setStatus(ResourceRequestStatus.COMPLETED);
                 convertResourceRequestToProject(request);
+                mailerProxy.sendEmail(new EmailData(EmailType.RESOURCE_REQUEST_STATUS.value(),
+                                                    request.getRequester().getEmailId(),
+                                                    Map.of("approved", String.valueOf(actionName.equals(RowAction.APPROVE)),
+                                                           "resourceName", request.getResource().getEmailId())));
             } else if (actionName.equals(RowAction.REJECT)) {
                 // send an email here
                 request.setStatus(ResourceRequestStatus.CANCELLED);
+                mailerProxy.sendEmail(new EmailData(EmailType.RESOURCE_REQUEST_STATUS.value(),
+                                                    request.getRequester().getEmailId(),
+                                                    Map.of("approved", String.valueOf(actionName.equals(RowAction.APPROVE)))));
             }
             em.merge(request);
         } else {
@@ -142,13 +158,6 @@ public class ResourceRequestRepository implements PanacheRepository<ResourceRequ
         projectSlot.persist();
         project.setSlot(projectSlot);
         project.setProjectManager(resourceRequest.getRequester());
-//        for(ResourceRequestSkillsProficiency skillProficiency : resourceRequest.getSkillProficiencies()){
-//            Skill skill= skillProficiency.getSkill();
-//            SkillProficiencyLevel skillProficiencyLevel = skillProficiency.getProficiencyLevel();
-//            ProjectSkillsProficiency projectSkillsProficiency = new ProjectSkillsProficiency(skill, skillProficiencyLevel);
-//            projectSkillsProficiency.persist();
-//            projectSkillsProficiency.setProject(project);
-//        }
         project.persist();
     }
 }

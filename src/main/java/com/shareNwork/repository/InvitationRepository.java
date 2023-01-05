@@ -1,13 +1,14 @@
 package com.shareNwork.repository;
 
-import java.text.ParseException;
+import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -16,26 +17,24 @@ import javax.transaction.Transactional;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import com.shareNwork.domain.Employee;
+import com.shareNwork.domain.EmailData;
 import com.shareNwork.domain.Invitation;
 import com.shareNwork.domain.InvitationResponse;
 import com.shareNwork.domain.QueryParams;
-import com.shareNwork.domain.Role;
+import com.shareNwork.domain.constants.EmailType;
 import com.shareNwork.domain.constants.InvitationStatus;
-import com.shareNwork.domain.constants.RoleType;
+import com.shareNwork.proxy.MailerProxy;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.impl.TextCodec;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
-import io.quarkus.mailer.MailTemplate;
-import io.quarkus.qute.Location;
 import org.apache.commons.lang3.time.DateUtils;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
 
 import static io.jsonwebtoken.SignatureAlgorithm.HS256;
 
 @ApplicationScoped
-
 public class InvitationRepository implements PanacheRepository<Invitation> {
 
     private static final Logger LOGGER = Logger.getLogger(InvitationRepository.class);
@@ -51,9 +50,8 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
     @Inject
     EmployeeRepository employeeRepository;
 
-    @Inject
-    @Location("sharedResourceInvitation")
-    MailTemplate sharedResourceInvitation;
+    @RestClient
+    MailerProxy mailerProxy;
 
     public static String decodeToken(String token) {
         Base64.Decoder decoder = Base64.getDecoder();
@@ -63,49 +61,6 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
             payload = new String(decoder.decode(chunks[1]));
         }
         return payload;
-    }
-
-    @Transactional
-    public List<InvitationResponse> createInvitationToken(List<Invitation> invitationlist) {
-        List<InvitationResponse> responses = new ArrayList<>();
-        for (Invitation invitation : invitationlist) {
-
-            InvitationResponse invitationResponse = new InvitationResponse();
-            List<Invitation> invitations = listAll();
-
-            for (Invitation invitation1 : invitations) {
-                if (invitation1.getEmailId().equals(invitation.getEmailId())) {
-                    invitationResponse.setResponseStatus(Response.Status.CONFLICT.getStatusCode());
-                    invitationResponse.setToken(null);
-                    responses.add(invitationResponse);
-                    return responses;
-                }
-            }
-
-            String token = Jwts.builder()
-                    .claim("email", invitation.getEmailId())
-                    .setIssuedAt(new java.util.Date())
-                    .setExpiration(DateUtils.addHours(new java.util.Date(), 3))
-                    .signWith(
-                            HS256,
-                            TextCodec.BASE64.decode("Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5E=")
-                    )
-                    .compact();
-
-            invitation.setStatus(InvitationStatus.PENDING);
-            final String inviteURL = getInvitationParams(token, invitation.getEmailId());
-            invitation.setInvitationLinkParams(inviteURL);
-            persist(invitation);
-            invitationResponse.setToken(token);
-            invitationResponse.setResponseStatus(Response.Status.OK.getStatusCode());
-
-            sharedResourceInvitation.to(invitation.getEmailId())
-                    .subject("[Action Required] Invitation from OpenRota")
-                    .data("invitationLink", inviteURL)
-                    .send().subscribe().with(t -> LOGGER.info("Mail sent to " + invitation.getEmailId()));
-            responses.add(invitationResponse);
-        }
-        return responses;
     }
 
     @Transactional
@@ -175,12 +130,15 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
                 .compact();
     }
 
-    public void sendEmail(String token, String email, String role){
-        sharedResourceInvitation.to(email)
-                .subject("[Action Required] Invitation from OpenRota")
-                .data("invitationLink", getInvitationParams(token, email))
-                .data("role", role)
-                .send().subscribe().with(t -> LOGGER.info("Mail sent to " + email));
+    private void sendEmail(String token, String email, String role){
+        final EmailData emailData = EmailData.builder()
+                .emailType(EmailType.OPENROTA_INVITATION.value())
+                .mailTo(email)
+                .emailTemplateVariables(Map.of("invitationLink", getInvitationParams(token, email),
+                                               "role", role))
+                .build();
+        Response response = mailerProxy.sendEmail(emailData);
+        LOGGER.info(response.getStatus());
     }
 
     private String getInvitationParams(final String token, final String email) {
@@ -226,6 +184,14 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
             }
         }
         return (new InvitationResponse(Response.Status.NOT_FOUND.getStatusCode(), "No invitations found for email " + emailId));
+    }
+
+    @Transactional
+    public List<Invitation> expiringInvitations(final int days) {
+        return streamAll()
+                .filter(invitation -> invitation.getStatus().equals(InvitationStatus.PENDING)
+                        && Duration.between(invitation.getCreatedAt(), LocalDateTime.now()).toDays() <= days)
+                .collect(Collectors.toList());
     }
 
 }
