@@ -28,18 +28,24 @@ public class ProjectResource {
         return this.projectRepository.findAll().list();
     }
 
-    @Query("getSkillsByProjectId")
-    @Description("Get required skills of project Id")
-    @Transactional
-    public List<ProjectSkillsProficiency> getSkillsByProjectId(long id) {
-        return projectRepository.getSkillsByProjectId(id);
+    @Query("projectsByRequestor")
+    @Description("Get projects by requestor")
+    public List<Project> getProjectsByRequestor(long id) {
+        return this.projectRepository.getProjectsByRequestor(id);
     }
+
+    @Query("projectsByResource")
+    @Description("Get projects by resource")
+    public List<Project> getProjectsByResource(long id) {
+        return this.projectRepository.getProjectsByResource(id);
+    }
+
 
     @Query("getProjectById")
     @Description("Get project by id")
     @Transactional
     public Project getProjectById(long id) {
-        return projectRepository.getProjectByProjectId(id);
+        return projectRepository.findById(id);
     }
 
     @Mutation
@@ -48,7 +54,6 @@ public class ProjectResource {
 
         return this.projectRepository.createOrUpdateProject(project);
     }
-
     @Mutation
     @Description("complete project")
     public com.shareNwork.domain.Project completeProject(long projectId, String comments) throws ParseException {

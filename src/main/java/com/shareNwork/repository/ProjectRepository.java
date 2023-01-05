@@ -11,6 +11,7 @@ import com.shareNwork.proxy.MailerProxy;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.mailer.Mail;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import io.quarkus.panache.common.Sort;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -22,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class ProjectRepository implements PanacheRepository<Project> {
@@ -39,76 +41,20 @@ public class ProjectRepository implements PanacheRepository<Project> {
             project.setStatus(ProjectStatus.PENDING);
             persist(project);
         }
-//        addSkillsToProject(project.id, project.getSkillsProficiencies());
         return em.merge(project);
     }
 
-    @Transactional
-    public Project addSkillsToProject(Long id, List<ProjectSkillsProficiency> projectSkillProficiencies) throws ParseException {
-        Project project = findById(id);
-        if (project == null) {
-            throw new NotFoundException();
-        }
-        else {
-            if (projectSkillProficiencies != null) {
-                for (ProjectSkillsProficiency projectSkillProficiency : projectSkillProficiencies) {
-                    if (projectSkillProficiency.id != null) {
-                        updateSkillsOfProject(projectSkillProficiency.id, projectSkillProficiency);
-                    }
-                    else {
-                        projectSkillProficiency.setProject(project);
-                        projectSkillProficiency.persist();
-                    }
-                }
-            }
-        }
-        return project;
+    public List<Project> getProjectsByResource(long id) {
+      return listAll().stream().filter(project -> project.getEmployee() != null && project.getEmployee().id  == id).collect(Collectors.toList());
+    }
+    public List<Project> getProjectsByRequestor(long id) {
+        return listAll().stream().filter(project -> project.getProjectManager() != null && project.getProjectManager().id  == id).collect(Collectors.toList());
     }
 
-    @Transactional
-    public ProjectSkillsProficiency updateSkillsOfProject(Long id, ProjectSkillsProficiency projectSkillProficiency) throws ParseException {
-        ProjectSkillsProficiency projectSkillProficiency1 = ProjectSkillsProficiency.findById(projectSkillProficiency.id);
-        if (projectSkillProficiency1 == null) {
-            throw new NotFoundException();
-        }
-        if (projectSkillProficiency.getSkill() != null) {
-            projectSkillProficiency1.setSkill(projectSkillProficiency.getSkill());
-        }
-        if (projectSkillProficiency.getProficiencyLevel() != null) {
-            projectSkillProficiency1.setProficiencyLevel(projectSkillProficiency.getProficiencyLevel());
-        }
-        projectSkillProficiency1.persist();
-        return projectSkillProficiency1;
-    }
-
-    @Transactional
-    public List<ProjectSkillsProficiency> getSkillsByProjectId(long id) {
-        Project project = findById(id);
-        List<ProjectSkillsProficiency> response = new ArrayList<>();
-        if (project != null) {
-            List<ProjectSkillsProficiency> projectSkillsProficiencies = ProjectSkillsProficiency.listAll();
-            for (ProjectSkillsProficiency projectSkillsProficiency : projectSkillsProficiencies) {
-                if (projectSkillsProficiency.getProject().id.equals(id)) {
-                    response.add(projectSkillsProficiency);
-                }
-            }
-        }
-        return response;
-    }
-
-    @Transactional
-    public Project getProjectByProjectId(long id) {
-        Project project = findById(id);
-//        if (project != null) {
-//            List<ProjectSkillsProficiency> projectSkillsProficiencies = getSkillsByProjectId(id);
-//            project.setSkillsProficiencies(projectSkillsProficiencies);
-//        }
-        return project;
-    }
 
     @Transactional
     public Project completeProject(long projectId, String comments) throws ParseException {
-        Project project = getProjectByProjectId(projectId);
+        Project project = findById(projectId);
         ProjectFeedback projectFeedback = new ProjectFeedback();
         if (project != null) {
 

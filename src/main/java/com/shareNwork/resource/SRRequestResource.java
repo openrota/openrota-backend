@@ -37,13 +37,6 @@ public class SRRequestResource {
         return resourceRequestRepository.getSharedResourceByRequestor(id);
     }
 
-    @Query("getSkillsByRequestId")
-    @Description("Get required skills of request Id")
-    @Transactional
-    public List<ResourceRequestSkillsProficiency> getSkillsByRequestId(long id) {
-        return resourceRequestRepository.getSkillsByRequestId(id);
-    }
-
     @Query("sharedResourceRequestById")
     @Description("Get resources request by id")
     @Transactional

@@ -92,65 +92,13 @@ public class ResourceRequestRepository implements PanacheRepository<ResourceRequ
         return request;
     }
 
-
-    @Transactional
-    public List<ResourceRequestSkillsProficiency> getSkillsByRequestId(long id) {
-        ResourceRequest resourceRequest = findById(id);
-        List<ResourceRequestSkillsProficiency> response = new ArrayList<>();
-        if (resourceRequest != null) {
-            List<ResourceRequestSkillsProficiency> resourceRequestSkillsProficiencies = ResourceRequestSkillsProficiency.listAll();
-            for (ResourceRequestSkillsProficiency resourceRequestSkillsProficiency : resourceRequestSkillsProficiencies) {
-                if (resourceRequestSkillsProficiency.getResourceRequest().id.equals(id)) {
-                    response.add(resourceRequestSkillsProficiency);
-                }
-            }
-        }
-        return response;
-    }
-
-    @Transactional
-    public ResourceRequest addSkillsToResourceRequests(Long id, List<ResourceRequestSkillsProficiency> employeeSkillProficiencies) throws ParseException {
-        ResourceRequest employee = findById(id);
-        if (employee == null) {
-            throw new NotFoundException();
-        } else {
-            if (employeeSkillProficiencies != null) {
-                for (ResourceRequestSkillsProficiency employeeSkillProficiency : employeeSkillProficiencies) {
-                    if (employeeSkillProficiency.id != null) {
-                        updateSkillsOfEmployee(employeeSkillProficiency.id, employeeSkillProficiency);
-                    } else {
-                        employeeSkillProficiency.setResourceRequest(employee);
-                        employeeSkillProficiency.persist();
-                    }
-                }
-            }
-        }
-        return employee;
-    }
-
-    @Transactional
-    public ResourceRequestSkillsProficiency updateSkillsOfEmployee(Long id, ResourceRequestSkillsProficiency employeeSkillProficiency) throws ParseException {
-        ResourceRequestSkillsProficiency employeeSkillProficiency1 = ResourceRequestSkillsProficiency.findById(employeeSkillProficiency.id);
-        if (employeeSkillProficiency1 == null) {
-            throw new NotFoundException();
-        }
-        if (employeeSkillProficiency.getSkill() != null) {
-            employeeSkillProficiency1.setSkill(employeeSkillProficiency.getSkill());
-        }
-        if (employeeSkillProficiency.getProficiencyLevel() != null) {
-            employeeSkillProficiency1.setProficiencyLevel(employeeSkillProficiency.getProficiencyLevel());
-        }
-        employeeSkillProficiency1.persist();
-        return employeeSkillProficiency1;
-    }
-
     public void convertResourceRequestToProject(ResourceRequest resourceRequest){
         Project project = new Project();
         project.setProjectName(resourceRequest.getProject());
         project.setCreatedAt(LocalDateTime.now());
         project.setResourcerequest(resourceRequest);
         project.setEmployee(resourceRequest.getResource());
-        project.setStatus(ProjectStatus.INPROGRESS);
+        project.setStatus(ProjectStatus.YET_TO_START);
         project.setBusinessUnit(resourceRequest.getBusinessUnit());
         String startDate = resourceRequest.getStartDate();
         String endDate = resourceRequest.getEndDate();
