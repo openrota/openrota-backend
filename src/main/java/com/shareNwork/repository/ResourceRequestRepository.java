@@ -10,12 +10,15 @@ import com.shareNwork.rest.roaster.RoasterService;
 import com.shareNwork.proxy.MailerProxy;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.Response;
+
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -28,6 +31,7 @@ import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class ResourceRequestRepository implements PanacheRepository<ResourceRequest> {
+    private static final Logger LOGGER = Logger.getLogger(ResourceRequestRepository.class);
 
     @Inject
     EntityManager em;
@@ -55,10 +59,11 @@ public class ResourceRequestRepository implements PanacheRepository<ResourceRequ
             roasterService.solveRoster(12);
 
         }
-        mailerProxy.sendEmail(new EmailData(EmailType.NEW_RESOURCE_REQ.value(),
-                                            shareResourceRequest.getRequester().getEmailId(),
-                                            Map.of("requestId", String.valueOf(shareResourceRequest.id),
+        Response response = mailerProxy.sendEmail(new EmailData(EmailType.NEW_RESOURCE_REQ.value(),
+                                                                shareResourceRequest.getRequester().getEmailId(),
+                                                                Map.of("requestId", String.valueOf(shareResourceRequest.id),
                                                    "projectName", shareResourceRequest.getProject())));
+        LOGGER.info("openrota-mailer-service:" + response.getStatusInfo());
         return em.merge(shareResourceRequest);
     }
 
@@ -74,16 +79,18 @@ public class ResourceRequestRepository implements PanacheRepository<ResourceRequ
                 }
                 request.setStatus(ResourceRequestStatus.COMPLETED);
                 convertResourceRequestToProject(request);
-                mailerProxy.sendEmail(new EmailData(EmailType.RESOURCE_REQUEST_STATUS.value(),
+                Response response = mailerProxy.sendEmail(new EmailData(EmailType.RESOURCE_REQUEST_STATUS.value(),
                                                     request.getRequester().getEmailId(),
                                                     Map.of("approved", String.valueOf(actionName.equals(RowAction.APPROVE)),
                                                            "resourceName", request.getResource().getEmailId())));
+                LOGGER.info("openrota-mailer-service:" + response.getStatusInfo());
             } else if (actionName.equals(RowAction.REJECT)) {
                 // send an email here
                 request.setStatus(ResourceRequestStatus.CANCELLED);
-                mailerProxy.sendEmail(new EmailData(EmailType.RESOURCE_REQUEST_STATUS.value(),
+                Response response = mailerProxy.sendEmail(new EmailData(EmailType.RESOURCE_REQUEST_STATUS.value(),
                                                     request.getRequester().getEmailId(),
                                                     Map.of("approved", String.valueOf(actionName.equals(RowAction.APPROVE)))));
+                LOGGER.info("openrota-mailer-service:" + response.getStatusInfo());
             }
             em.merge(request);
         } else {
