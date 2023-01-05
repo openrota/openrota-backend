@@ -139,7 +139,7 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
                                                "role", role))
                 .build();
         Response response = mailerProxy.sendEmail(emailData);
-        LOGGER.info(response.getStatus());
+        LOGGER.info("openrota-mailer-service:" + response.getStatusInfo());
     }
 
     private String getInvitationParams(final String token, final String email) {

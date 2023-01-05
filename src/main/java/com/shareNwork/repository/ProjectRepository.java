@@ -12,12 +12,15 @@ import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.mailer.Mail;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import io.quarkus.panache.common.Sort;
+import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.Response;
+
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -27,6 +30,7 @@ import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class ProjectRepository implements PanacheRepository<Project> {
+    private static final Logger LOGGER = Logger.getLogger(ProjectRepository.class);
 
     @Inject
     EntityManager em;
@@ -64,10 +68,11 @@ public class ProjectRepository implements PanacheRepository<Project> {
             projectFeedback.setFeedback(comments);
             projectFeedback.persist();
             em.merge(project);
-            mailerProxy.sendEmail(EmailData.builder()
+            Response response = mailerProxy.sendEmail(EmailData.builder()
                                           .emailType(EmailType.PROJECT_COMPLETED.value())
                                           .mailTo(project.getProjectManager().getEmailId())
                                           .emailTemplateVariables(Map.of("projectId", String.valueOf(projectId))).build());
+            LOGGER.info("openrota-mailer-service:" + response.getStatusInfo());
         }
         else {
             throw new NotFoundException();

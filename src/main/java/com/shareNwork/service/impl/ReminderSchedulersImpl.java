@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.ws.rs.core.Response;
 
 import com.shareNwork.domain.EmailData;
 import com.shareNwork.domain.Invitation;
@@ -41,8 +42,10 @@ public class ReminderSchedulersImpl implements ReminderSchedulers {
         List<Invitation> emailIds = invitationRepository.expiringInvitations(3);
         List<EmailData> emailDataList = toEmailData(emailIds, 3);
         LOGGER.info(emailDataList.toString());
-        if (!emailDataList.isEmpty())
-            mailerProxy.sendMultipleEmail(emailDataList);
+        if (!emailDataList.isEmpty()) {
+            Response response = mailerProxy.sendMultipleEmail(emailDataList);
+            LOGGER.info("openrota-mailer-service:" + response.getStatusInfo());
+        }
     }
 
     @Override

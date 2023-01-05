@@ -9,18 +9,23 @@ import com.shareNwork.domain.constants.RowAction;
 import com.shareNwork.proxy.MailerProxy;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.Response;
+
 import java.text.ParseException;
 import java.util.Map;
 import java.util.Set;
 
 @ApplicationScoped
 public class AccessRequestRepository implements PanacheRepository<AccessRequest> {
+
+    private static final Logger LOGGER = Logger.getLogger(AccessRequestRepository.class);
 
     @Inject
     EntityManager em;
@@ -58,6 +63,7 @@ public class AccessRequestRepository implements PanacheRepository<AccessRequest>
     }
 
     public void sendEmail(final EmailData emailData) {
-        mailerProxy.sendEmail(emailData);
+        Response response = mailerProxy.sendEmail(emailData);
+        LOGGER.info("openrota-mailer-service:" + response.getStatusInfo());
     }
 }
