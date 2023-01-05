@@ -21,6 +21,7 @@ import com.shareNwork.domain.EmailData;
 import com.shareNwork.domain.Invitation;
 import com.shareNwork.domain.InvitationResponse;
 import com.shareNwork.domain.QueryParams;
+import com.shareNwork.domain.Role;
 import com.shareNwork.domain.constants.EmailType;
 import com.shareNwork.domain.constants.InvitationStatus;
 import com.shareNwork.proxy.MailerProxy;
