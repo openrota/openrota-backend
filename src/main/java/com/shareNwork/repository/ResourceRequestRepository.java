@@ -56,8 +56,6 @@ public class ResourceRequestRepository implements PanacheRepository<ResourceRequ
                 shareResourceRequest.setRequester(requestor);
             }
             persist(shareResourceRequest);
-            roasterService.solveRoster(12);
-
         }
         Response response = mailerProxy.sendEmail(new EmailData(EmailType.NEW_RESOURCE_REQ.value(),
                                                                 shareResourceRequest.getRequester().getEmailId(),

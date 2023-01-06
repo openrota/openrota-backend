@@ -17,7 +17,7 @@ public final class RoasterConstraintsProvider implements ConstraintProvider {
     @Override
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
         return new Constraint[]{
-                requiredSkillsForProject(constraintFactory),
+                requiredSkillsForProject(constraintFactory), 
         };
     }
 

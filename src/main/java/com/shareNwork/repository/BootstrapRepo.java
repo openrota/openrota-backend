@@ -52,7 +52,11 @@ public class BootstrapRepo {
         Skill skill2 = new Skill("java");
         Skill skill3 = new Skill("html");
         Skill skill4 = new Skill("javascript");
-
+        Skill skill5 = new Skill("javascript");
+//        ["python",
+//        "java",
+//        "html",
+//        "javascript","c", "dasbul"]
         this.skillRepository.persist(skill1);
         this.skillRepository.persist(skill2);
         this.skillRepository.persist(skill3);
@@ -81,21 +85,13 @@ public class BootstrapRepo {
         resourceRequest.setResource(employee2);
         resourceRequest.setSkillSet(Set.of("java","python", "c"));
         resourceRequest.persist();
-
-        ResourceRequest resourceRequest2 = new ResourceRequest(manager1, "Integration", "Serverless workflow", "Documentation", LocalDate.now().toString(), LocalDate.now().toString(), ResourceRequestStatus.PENDING);
-        resourceRequest2.setResource(employee1);
-        resourceRequest2.setSkillSet(Set.of("react","javascript", "html"));
-        resourceRequest2.persist();
-
-        ResourceRequest resourceRequest3 = new ResourceRequest(manager1, "Application services", "Kogito Website styling", "a very important one", LocalDate.now().toString(), LocalDate.now().toString(), ResourceRequestStatus.PENDING);
-        resourceRequest3.setResource(employee2);
-        resourceRequest3.setSkillSet(Set.of("kogito","react"));
-        resourceRequest3.persist();
+        resourceRequestRepository.convertResourceRequestToProject(resourceRequest);
 
         ResourceRequest resourceRequest4 = new ResourceRequest(manager1, "RHPAM", "Dashbuilder", "Documentation", LocalDate.now().toString(), LocalDate.now().toString(), ResourceRequestStatus.PENDING);
         resourceRequest4.setResource(employee1);
         resourceRequest4.setSkillSet(Set.of("dashbuilder"));
         resourceRequest4.persist();
+        resourceRequestRepository.convertResourceRequestToProject(resourceRequest4);
 
         ProjectFeedback pf = new ProjectFeedback("demonstrates great responsibility", LocalDateTime.now());
         pf.persist();
@@ -106,38 +102,29 @@ public class BootstrapRepo {
         Slot slot = new Slot("2022-05-11", "2022-05-20");
         slot.persist();
 
-        Project project = new Project("RHODS", "Managed Services", resourceRequest);
-        project.setProjectManager(manager1);
-        project.setSkillSet(Set.of("java","python", "c"));
-
-//        project.setEmployee(employee1);
-        project.setSlot(slot);
-        project.setStatus(ProjectStatus.PENDING);
-        project.persist();
-
-        Project project1 = new Project("JBPM","Application Services", resourceRequest2);
-        project1.setProjectManager(manager1);
-        project1.setSkillSet(Set.of("react","javascript", "html"));
-//        project1.setEmployee(employee1);
-        project1.setSlot(slot);
-        project1.setStatus(ProjectStatus.PENDING);
-        project1.persist();
-
-        Project project2 = new Project("Dashbuilder","Application Services", resourceRequest2);
-        project2.setProjectManager(manager1);
-        project2.setSkillSet(Set.of("dashbuilder"));
-//        project2.setEmployee(employee1);
-        project2.setSlot(slot);
-        project2.setStatus(ProjectStatus.PENDING);
-        project2.persist();
-
-        Project project3 = new Project("Kogito","Application Services", resourceRequest2);
-        project3.setProjectManager(manager1);
-        project3.setSkillSet(Set.of("kogito","react"));
-//        project3.setEmployee(employee1);
-        project3.setSlot(slot);
-        project3.setStatus(ProjectStatus.PENDING);
-        project3.persist();
+//        Project project1 = new Project("JBPM","Application Services", resourceRequest2);
+//        project1.setProjectManager(manager1);
+//        project1.setSkillSet(Set.of("react","javascript", "html"));
+////        project1.setEmployee(employee1);
+//        project1.setSlot(slot);
+//        project1.setStatus(ProjectStatus.PENDING);
+//        project1.persist();
+//
+//        Project project2 = new Project("Dashbuilder","Application Services", resourceRequest2);
+//        project2.setProjectManager(manager1);
+//        project2.setSkillSet(Set.of("dashbuilder"));
+////        project2.setEmployee(employee1);
+//        project2.setSlot(slot);
+//        project2.setStatus(ProjectStatus.PENDING);
+//        project2.persist();
+//
+//        Project project3 = new Project("Kogito","Application Services", resourceRequest2);
+//        project3.setProjectManager(manager1);
+//        project3.setSkillSet(Set.of("kogito","react"));
+////        project3.setEmployee(employee1);
+//        project3.setSlot(slot);
+//        project3.setStatus(ProjectStatus.PENDING);
+//        project3.persist();
 
 //        AccessRequest accessRequest = new AccessRequest("ranand@redhat.com", InvitationStatus.PENDING, "Temporary web site building work");
 //        accessRequest.persist();

@@ -66,7 +66,7 @@ public class RoasterService {
             // TODO this is awfully naive: optimistic locking causes issues if called by the SolverManager
             ResourceRequest resourceRequestResult = resourceRequestRepository.findById(resourceRequest.id);
             resourceRequestResult.setSuggestedResource(resourceRequest.getSuggestedResource());
-            System.out.println("project ka employee" + resourceRequest.getSuggestedResource().getFirstName());
+            System.out.println("project ka employee " + resourceRequest.getSuggestedResource().getFirstName());
         }
     }
 }
