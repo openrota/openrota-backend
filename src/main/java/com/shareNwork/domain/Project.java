@@ -38,6 +38,8 @@ public class Project extends PanacheEntity {
 
     private LocalDateTime createdAt;
 
+    private LocalDateTime endDate;
+
     @ManyToOne
     SharedResource employee;
 
