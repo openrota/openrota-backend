@@ -1,12 +1,14 @@
 package com.shareNwork.domain;
 
 import com.shareNwork.domain.Project;
+import com.shareNwork.domain.constants.ProjectStatus;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import java.time.LocalDateTime;
 
 @Data
@@ -14,12 +16,14 @@ import java.time.LocalDateTime;
 @Entity
 public class ProjectExtension extends PanacheEntity {
 
-    @OneToOne
+    @ManyToOne
     private Project project;
 
     private String reasonForExtension;
 
     private LocalDateTime extendedDate;
+
+    private ProjectStatus status;
 
     public ProjectExtension(String reasonForExtension, LocalDateTime extendedDate){
         this.reasonForExtension=reasonForExtension;

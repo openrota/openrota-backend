@@ -39,5 +39,4 @@ public class ProcessResource {
     public Process processActionHandler(Long processActionId, Long recordId) throws ParseException {
         return processhandler.handle(processActionId, recordId);
     }
-
 }

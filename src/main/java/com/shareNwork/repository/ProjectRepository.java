@@ -2,6 +2,7 @@ package com.shareNwork.repository;
 
 import com.shareNwork.domain.EmailData;
 import com.shareNwork.domain.Project;
+import com.shareNwork.domain.ProjectExtension;
 import com.shareNwork.domain.ProjectFeedback;
 import com.shareNwork.domain.ProjectSkillsProficiency;
 import com.shareNwork.domain.constants.EmailType;
@@ -80,4 +81,26 @@ public class ProjectRepository implements PanacheRepository<Project> {
         return project;
     }
 
+    @Transactional
+    public Project extendProject(ProjectExtension projectExtension) {
+        ProjectExtension.persist(projectExtension);
+        Project project = projectExtension.getProject();
+        project.setStatus(ProjectStatus.EXTENSION_REQUESTED);
+        persist(project);
+        return project;
+    }
+
+    @Transactional
+    public Project updateProjectExtension(ProjectExtension projectExtension) {
+        ProjectExtension.persist(projectExtension);
+        Project project = projectExtension.getProject();
+        if (ProjectStatus.EXTENSION_APPROVED.equals(projectExtension.getStatus())) {
+            project.setEndDate(projectExtension.getExtendedDate());
+            project.setStatus(ProjectStatus.INPROGRESS);
+        } else if (ProjectStatus.EXTENSION_DENIED.equals(projectExtension.getStatus())) {
+            project.setStatus(ProjectStatus.INPROGRESS);
+        }
+        persist(project);
+        return project;
+    }
 }

@@ -1,9 +1,11 @@
 package com.shareNwork.resource;
 
 import com.shareNwork.domain.Project;
+import com.shareNwork.domain.ProjectExtension;
 import com.shareNwork.domain.ProjectSkillsProficiency;
 import com.shareNwork.domain.ResourceRequest;
 import com.shareNwork.domain.ResourceRequestSkillsProficiency;
+import com.shareNwork.domain.constants.ProjectStatus;
 import com.shareNwork.domain.constants.RowAction;
 import com.shareNwork.repository.ProjectRepository;
 import lombok.AllArgsConstructor;
@@ -58,5 +60,17 @@ public class ProjectResource {
     @Description("complete project")
     public com.shareNwork.domain.Project completeProject(long projectId, String comments) throws ParseException {
         return this.projectRepository.completeProject(projectId, comments);
+    }
+
+    @Mutation
+    @Description("Create Project extension request")
+    public Project extendProject(ProjectExtension projectExtension) {
+        return projectRepository.extendProject(projectExtension);
+    }
+
+    @Mutation
+    @Description("Update Project extension request")
+    public Project updateProjectExtension(ProjectExtension projectExtension) {
+        return projectRepository.updateProjectExtension(projectExtension);
     }
 }
