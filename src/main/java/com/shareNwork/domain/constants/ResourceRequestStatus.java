@@ -6,5 +6,4 @@ public enum ResourceRequestStatus {
     INPROGRESS,
     COMPLETED,
     CANCELLED
-
 }

@@ -17,6 +17,6 @@ import lombok.NoArgsConstructor;
 @Inheritance(strategy = InheritanceType.JOINED)
 @EqualsAndHashCode(callSuper = false)
 public class AllowedDesignation extends PanacheEntity {
-    private String name;
 
+    private String name;
 }

@@ -5,9 +5,9 @@ import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -72,14 +72,14 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
         // check if this email ID exist
         for (Invitation invitation1 : listAll()) {
 
-                if (invitation1.getEmailId().equals(invitation.getEmailId())) {
-                    invitationResponse.setResponseStatus(Response.Status.CONFLICT.getStatusCode());
-                    invitationResponse.setToken(null);
-                    return invitationResponse;
-                }
+            if (invitation1.getEmailId().equals(invitation.getEmailId())) {
+                invitationResponse.setResponseStatus(Response.Status.CONFLICT.getStatusCode());
+                invitationResponse.setToken(null);
+                return invitationResponse;
+            }
         }
 
-        if(isValidEmail(invitation.getEmailId())) {
+        if (isValidEmail(invitation.getEmailId())) {
             token = generateToken("email", invitation.getEmailId());
         }
 
@@ -97,7 +97,6 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
 
         return invitationResponse;
     }
-
 
     @Transactional
     public Invitation resendInvitation(Long invitationId) {
@@ -131,7 +130,7 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
                 .compact();
     }
 
-    private void sendEmail(String token, String email, String role){
+    private void sendEmail(String token, String email, String role) {
         final EmailData emailData = EmailData.builder()
                 .emailType(EmailType.OPENROTA_INVITATION.value())
                 .mailTo(email)
@@ -194,5 +193,4 @@ public class InvitationRepository implements PanacheRepository<Invitation> {
                         && Duration.between(invitation.getCreatedAt(), LocalDateTime.now()).toDays() <= days)
                 .collect(Collectors.toList());
     }
-
 }

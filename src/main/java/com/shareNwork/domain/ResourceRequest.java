@@ -1,20 +1,25 @@
 package com.shareNwork.domain;
 
-import com.shareNwork.domain.constants.ResourceRequestStatus;
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import lombok.*;
-import org.optaplanner.core.api.domain.entity.PlanningEntity;
-import org.optaplanner.core.api.domain.variable.PlanningVariable;
-
-import javax.persistence.*;
-
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.List;
 import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
+
+import com.shareNwork.domain.constants.ResourceRequestStatus;
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import org.optaplanner.core.api.domain.entity.PlanningEntity;
+import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
 @Entity
 @Data
@@ -61,9 +66,11 @@ public class ResourceRequest extends PanacheEntity {
         this.endDate = endDate;
         this.status = status;
     }
+
     public boolean hasRequiredSkills() {
         return suggestedResource.getSkillSet().containsAll(skillSet);
     }
+
     // TODO unsupported GraphQL Scalar date types
     public LocalDate getStartLocalDate() {
         return getParsedDate(getEndDate());

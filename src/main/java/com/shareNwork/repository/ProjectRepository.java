@@ -1,18 +1,10 @@
 package com.shareNwork.repository;
 
-import com.shareNwork.domain.EmailData;
-import com.shareNwork.domain.Project;
-import com.shareNwork.domain.ProjectFeedback;
-import com.shareNwork.domain.ProjectSkillsProficiency;
-import com.shareNwork.domain.constants.EmailType;
-import com.shareNwork.domain.constants.ProjectStatus;
-import com.shareNwork.domain.constants.ResourceRequestStatus;
-import com.shareNwork.proxy.MailerProxy;
-import io.quarkus.hibernate.orm.panache.PanacheRepository;
-import io.quarkus.mailer.Mail;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
-import io.quarkus.panache.common.Sort;
-import org.jboss.logging.Logger;
+import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -21,15 +13,19 @@ import javax.transaction.Transactional;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
-import java.text.ParseException;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import com.shareNwork.domain.EmailData;
+import com.shareNwork.domain.Project;
+import com.shareNwork.domain.ProjectFeedback;
+import com.shareNwork.domain.constants.EmailType;
+import com.shareNwork.domain.constants.ProjectStatus;
+import com.shareNwork.proxy.MailerProxy;
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.jboss.logging.Logger;
 
 @ApplicationScoped
 public class ProjectRepository implements PanacheRepository<Project> {
+
     private static final Logger LOGGER = Logger.getLogger(ProjectRepository.class);
 
     @Inject
@@ -49,12 +45,12 @@ public class ProjectRepository implements PanacheRepository<Project> {
     }
 
     public List<Project> getProjectsByResource(long id) {
-      return listAll().stream().filter(project -> project.getEmployee() != null && project.getEmployee().id  == id).collect(Collectors.toList());
-    }
-    public List<Project> getProjectsByRequestor(long id) {
-        return listAll().stream().filter(project -> project.getProjectManager() != null && project.getProjectManager().id  == id).collect(Collectors.toList());
+        return listAll().stream().filter(project -> project.getEmployee() != null && project.getEmployee().id == id).collect(Collectors.toList());
     }
 
+    public List<Project> getProjectsByRequestor(long id) {
+        return listAll().stream().filter(project -> project.getProjectManager() != null && project.getProjectManager().id == id).collect(Collectors.toList());
+    }
 
     @Transactional
     public Project completeProject(long projectId, String comments) throws ParseException {
@@ -69,15 +65,13 @@ public class ProjectRepository implements PanacheRepository<Project> {
             projectFeedback.persist();
             em.merge(project);
             Response response = mailerProxy.sendEmail(EmailData.builder()
-                                          .emailType(EmailType.PROJECT_COMPLETED.value())
-                                          .mailTo(project.getProjectManager().getEmailId())
-                                          .emailTemplateVariables(Map.of("projectId", String.valueOf(projectId))).build());
+                                                              .emailType(EmailType.PROJECT_COMPLETED.value())
+                                                              .mailTo(project.getProjectManager().getEmailId())
+                                                              .emailTemplateVariables(Map.of("projectId", String.valueOf(projectId))).build());
             LOGGER.info("openrota-mailer-service:" + response.getStatusInfo());
-        }
-        else {
+        } else {
             throw new NotFoundException();
         }
         return project;
     }
-
 }

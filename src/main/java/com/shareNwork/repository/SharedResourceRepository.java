@@ -1,13 +1,8 @@
 package com.shareNwork.repository;
 
-import com.shareNwork.domain.Employee;
-import com.shareNwork.domain.EmployeeSkillProficiency;
-import com.shareNwork.domain.Role;
-import com.shareNwork.domain.SharedResource;
-import com.shareNwork.domain.constants.ResourceAvailabilityStatus;
-import com.shareNwork.domain.constants.RoleType;
-import com.shareNwork.domain.filters.EmployeeFilter;
-import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import java.text.ParseException;
+import java.util.List;
+import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -18,9 +13,14 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import javax.ws.rs.NotFoundException;
-import java.text.ParseException;
-import java.util.List;
-import java.util.Set;
+
+import com.shareNwork.domain.Employee;
+import com.shareNwork.domain.EmployeeSkillProficiency;
+import com.shareNwork.domain.SharedResource;
+import com.shareNwork.domain.constants.ResourceAvailabilityStatus;
+import com.shareNwork.domain.constants.RoleType;
+import com.shareNwork.domain.filters.EmployeeFilter;
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
 
 @ApplicationScoped
 public class SharedResourceRepository implements PanacheRepository<SharedResource> {
@@ -63,8 +63,8 @@ public class SharedResourceRepository implements PanacheRepository<SharedResourc
         if (employee == null) {
             throw new NotFoundException();
         } else {
-            for (EmployeeSkillProficiency employeeSkillProficiency: employeeSkillProficiencies) {
-                if (employeeSkillProficiency.id != null ) {
+            for (EmployeeSkillProficiency employeeSkillProficiency : employeeSkillProficiencies) {
+                if (employeeSkillProficiency.id != null) {
                     updateSkillsOfEmployee(employeeSkillProficiency.id, employeeSkillProficiency);
                 } else {
                     employeeSkillProficiency.setEmployee(employee);
@@ -72,7 +72,7 @@ public class SharedResourceRepository implements PanacheRepository<SharedResourc
                 }
             }
         }
-       return employee;
+        return employee;
     }
 
     @Transactional
@@ -91,17 +91,15 @@ public class SharedResourceRepository implements PanacheRepository<SharedResourc
         return employeeSkillProficiency1;
     }
 
-
     @Transactional
     public EmployeeSkillProficiency deleteSkillsOfEmployee(Long id, EmployeeSkillProficiency employeeSkillProficiency) throws ParseException {
-            EmployeeSkillProficiency employeeSkillProficiency1 = EmployeeSkillProficiency.findById(employeeSkillProficiency.id);
-            if (employeeSkillProficiency1 == null) {
-                throw new NotFoundException();
-            }
-           employeeSkillProficiency1.delete();
-          return employeeSkillProficiency1;
+        EmployeeSkillProficiency employeeSkillProficiency1 = EmployeeSkillProficiency.findById(employeeSkillProficiency.id);
+        if (employeeSkillProficiency1 == null) {
+            throw new NotFoundException();
+        }
+        employeeSkillProficiency1.delete();
+        return employeeSkillProficiency1;
     }
-
 
     @Transactional
     public SharedResource deleteSharedResource(Long id) throws ParseException {
@@ -123,18 +121,22 @@ public class SharedResourceRepository implements PanacheRepository<SharedResourc
         CriteriaQuery<Employee> criteriaQuery = builder.createQuery(Employee.class);
         Root<Employee> root = criteriaQuery.from(Employee.class);
         Predicate predicate = null;
-        if (filter.getFirstName() != null)
+        if (filter.getFirstName() != null) {
             predicate = filter.getFirstName().generateCriteria(builder, root.get("firstName"));
-        if (filter.getLastName() != null)
+        }
+        if (filter.getLastName() != null) {
             predicate = (predicate == null ?
                     filter.getLastName().generateCriteria(builder, root.get("lastName")) :
                     builder.and(predicate, filter.getLastName().generateCriteria(builder, root.get("lastName"))));
-        if (filter.getEmailId() != null)
+        }
+        if (filter.getEmailId() != null) {
             predicate = (predicate == null ? filter.getEmailId().generateCriteria(builder, root.get("emailId")) :
                     builder.and(predicate, filter.getEmailId().generateCriteria(builder, root.get("emailId"))));
+        }
 
-        if (predicate != null)
+        if (predicate != null) {
             criteriaQuery.where(predicate);
+        }
 
         return em.createQuery(criteriaQuery).getResultList();
     }

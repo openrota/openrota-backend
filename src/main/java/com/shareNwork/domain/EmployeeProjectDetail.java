@@ -1,12 +1,12 @@
 package com.shareNwork.domain;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
+
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Data
@@ -17,5 +17,4 @@ public class EmployeeProjectDetail extends PanacheEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private SharedResource sharedResource;
-
 }

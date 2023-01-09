@@ -1,26 +1,28 @@
 package com.shareNwork.resource;
 
+import java.text.ParseException;
+import java.util.Collections;
+import java.util.List;
+
+import javax.transaction.Transactional;
+
 import com.shareNwork.domain.AccessRequest;
 import com.shareNwork.domain.AllowedDesignationResponse;
 import com.shareNwork.domain.EmailData;
 import com.shareNwork.domain.constants.EmailType;
 import com.shareNwork.domain.constants.InvitationStatus;
 import com.shareNwork.domain.constants.RowAction;
-
 import com.shareNwork.repository.AccessRequestRepository;
 import lombok.AllArgsConstructor;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.GraphQLApi;
 import org.eclipse.microprofile.graphql.Mutation;
 import org.eclipse.microprofile.graphql.Query;
-import javax.transaction.Transactional;
-import java.text.ParseException;
-import java.util.Collections;
-import java.util.List;
 
 @AllArgsConstructor
 @GraphQLApi
 public class AccessRequestResource {
+
     private AccessRequestRepository accessRequestRepository;
 
     @Query("accessRequest")
@@ -41,12 +43,12 @@ public class AccessRequestResource {
         List<AccessRequest> accessRequests = AccessRequest.listAll();
         AllowedDesignationResponse allowedDesignationResponse = new AllowedDesignationResponse();
         allowedDesignationResponse.setDesignationName(email);
-        for (AccessRequest accessRequest: accessRequests) {
-        if (accessRequest.getEmailId().equals(email) && accessRequest. getStatus().equals(InvitationStatus.COMPLETED) ) {
-            allowedDesignationResponse.setIsgranted(true);
-            return allowedDesignationResponse ;
-        }
-        allowedDesignationResponse.setIsgranted(false);
+        for (AccessRequest accessRequest : accessRequests) {
+            if (accessRequest.getEmailId().equals(email) && accessRequest.getStatus().equals(InvitationStatus.COMPLETED)) {
+                allowedDesignationResponse.setIsgranted(true);
+                return allowedDesignationResponse;
+            }
+            allowedDesignationResponse.setIsgranted(false);
         }
         return allowedDesignationResponse;
     }
@@ -55,16 +57,16 @@ public class AccessRequestResource {
     @Description("Create a new access request")
     @Transactional
     public AccessRequest createAccessRequest(AccessRequest accessRequest) {
-         if (accessRequest.id == null) {
-             accessRequest.setStatus(InvitationStatus.PENDING);
-             accessRequest.persist();
-             accessRequestRepository.sendEmail(EmailData.builder()
-                                           .emailType(EmailType.NEW_ACCESS_REQ.value())
-                                           .mailTo(accessRequest.getEmailId())
-                                           .emailTemplateVariables(Collections.emptyMap())
-                                           .build());
-             return accessRequest;
-         }
+        if (accessRequest.id == null) {
+            accessRequest.setStatus(InvitationStatus.PENDING);
+            accessRequest.persist();
+            accessRequestRepository.sendEmail(EmailData.builder()
+                                                      .emailType(EmailType.NEW_ACCESS_REQ.value())
+                                                      .mailTo(accessRequest.getEmailId())
+                                                      .emailTemplateVariables(Collections.emptyMap())
+                                                      .build());
+            return accessRequest;
+        }
         return null;
     }
 
@@ -73,5 +75,4 @@ public class AccessRequestResource {
     public com.shareNwork.domain.AccessRequest handleAccessRequestActions(RowAction actionName, AccessRequest accessRequest) throws ParseException {
         return this.accessRequestRepository.handleActions(actionName, accessRequest);
     }
-
 }

@@ -1,12 +1,13 @@
 package com.shareNwork.domain;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
-import java.time.LocalDateTime;
+
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
@@ -20,8 +21,8 @@ public class ProjectFeedback extends PanacheEntity {
 
     private LocalDateTime creationDate;
 
-    public ProjectFeedback(String feedback, LocalDateTime creationDate){
-        this.feedback=feedback;
-        this.creationDate=creationDate;
+    public ProjectFeedback(String feedback, LocalDateTime creationDate) {
+        this.feedback = feedback;
+        this.creationDate = creationDate;
     }
 }

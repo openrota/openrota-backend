@@ -20,6 +20,7 @@ import org.jboss.logging.Logger;
 @Produces(MediaType.APPLICATION_JSON)
 @RegisterRestClient
 public interface MailerProxy {
+
     static final Logger LOGGER = Logger.getLogger(MailerProxy.class);
 
     @POST
@@ -35,7 +36,9 @@ public interface MailerProxy {
     Response sendMultipleEmail(List<EmailData> emailDataList);
 
     public static class MailerResponseFallback implements FallbackHandler<Response> {
+
         private static final Response EMPTY_RESPONSE = Response.serverError().build();
+
         @Override
         public Response handle(ExecutionContext context) {
             LOGGER.error("Openrota Mailer Service is Unavailable!");

@@ -1,25 +1,30 @@
 package com.shareNwork.repository;
 
-import com.shareNwork.domain.*;
-import com.shareNwork.domain.constants.InvitationStatus;
-import com.shareNwork.domain.constants.ResourceAvailabilityStatus;
-import com.shareNwork.domain.constants.ResourceRequestStatus;
-import com.shareNwork.domain.constants.ProjectStatus;
-import com.shareNwork.domain.constants.SkillProficiencyLevel;
-import com.shareNwork.domain.constants.*;
-import com.shareNwork.domain.processEngine.Process;
-import io.quarkus.runtime.StartupEvent;
-import lombok.NoArgsConstructor;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+
+import com.shareNwork.domain.AllowedDesignation;
+import com.shareNwork.domain.CustomEvent;
+import com.shareNwork.domain.Employee;
+import com.shareNwork.domain.ProjectFeedback;
+import com.shareNwork.domain.ResourceRequest;
+import com.shareNwork.domain.Role;
+import com.shareNwork.domain.SharedResource;
+import com.shareNwork.domain.Skill;
+import com.shareNwork.domain.Slot;
+import com.shareNwork.domain.constants.CustomEventType;
+import com.shareNwork.domain.constants.ResourceAvailabilityStatus;
+import com.shareNwork.domain.constants.ResourceRequestStatus;
+import com.shareNwork.domain.constants.RoleType;
+import com.shareNwork.domain.processEngine.Process;
+import io.quarkus.runtime.StartupEvent;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @ApplicationScoped
@@ -69,10 +74,10 @@ public class BootstrapRepo {
         SharedResource employee4 = new SharedResource("Saravana", "Srinavasan", "SRA323", "mdas@redhat.com", "engineer", "12", ResourceAvailabilityStatus.AVAILABLE);
 
         employee1.setRoles(Set.of(role));
-        employee1.setSkillSet(Set.of("java","python", "c"));
-        employee2.setSkillSet(Set.of("react","javascript", "html"));
+        employee1.setSkillSet(Set.of("java", "python", "c"));
+        employee2.setSkillSet(Set.of("react", "javascript", "html"));
         employee3.setSkillSet(Set.of("dashbuilder"));
-        employee4.setSkillSet(Set.of("react","kogito"));
+        employee4.setSkillSet(Set.of("react", "kogito"));
         employee2.setRoles(Set.of(role2));
         manager1.setRoles(Set.of(role3));
         this.sharedResourceRepository.persist(employee1);
@@ -81,13 +86,13 @@ public class BootstrapRepo {
         this.sharedResourceRepository.persist(employee4);
         manager1.persist();
 
-        ResourceRequest resourceRequest = new ResourceRequest(manager1, "Business Automation", "Kogito Website styling", "a very important one", LocalDate.now().toString(), LocalDate.now().toString(), ResourceRequestStatus.PENDING);
+        ResourceRequest resourceRequest = new ResourceRequest(manager1, "Business Automation", "Kogito Website styling", "a very important one", LocalDate.now().toString(), LocalDate.now().plusDays(4).toString(), ResourceRequestStatus.PENDING);
         resourceRequest.setResource(employee2);
-        resourceRequest.setSkillSet(Set.of("java","python", "c"));
+        resourceRequest.setSkillSet(Set.of("java", "python", "c"));
         resourceRequest.persist();
         resourceRequestRepository.convertResourceRequestToProject(resourceRequest);
 
-        ResourceRequest resourceRequest4 = new ResourceRequest(manager1, "RHPAM", "Dashbuilder", "Documentation", LocalDate.now().toString(), LocalDate.now().toString(), ResourceRequestStatus.PENDING);
+        ResourceRequest resourceRequest4 = new ResourceRequest(manager1, "RHPAM", "Dashbuilder", "Documentation", LocalDate.now().toString(), LocalDate.now().plusDays(3).toString(), ResourceRequestStatus.PENDING);
         resourceRequest4.setResource(employee1);
         resourceRequest4.setSkillSet(Set.of("dashbuilder"));
         resourceRequest4.persist();
@@ -102,34 +107,6 @@ public class BootstrapRepo {
         Slot slot = new Slot("2022-05-11", "2022-05-20");
         slot.persist();
 
-//        Project project1 = new Project("JBPM","Application Services", resourceRequest2);
-//        project1.setProjectManager(manager1);
-//        project1.setSkillSet(Set.of("react","javascript", "html"));
-////        project1.setEmployee(employee1);
-//        project1.setSlot(slot);
-//        project1.setStatus(ProjectStatus.PENDING);
-//        project1.persist();
-//
-//        Project project2 = new Project("Dashbuilder","Application Services", resourceRequest2);
-//        project2.setProjectManager(manager1);
-//        project2.setSkillSet(Set.of("dashbuilder"));
-////        project2.setEmployee(employee1);
-//        project2.setSlot(slot);
-//        project2.setStatus(ProjectStatus.PENDING);
-//        project2.persist();
-//
-//        Project project3 = new Project("Kogito","Application Services", resourceRequest2);
-//        project3.setProjectManager(manager1);
-//        project3.setSkillSet(Set.of("kogito","react"));
-////        project3.setEmployee(employee1);
-//        project3.setSlot(slot);
-//        project3.setStatus(ProjectStatus.PENDING);
-//        project3.persist();
-
-//        AccessRequest accessRequest = new AccessRequest("ranand@redhat.com", InvitationStatus.PENDING, "Temporary web site building work");
-//        accessRequest.persist();
-
-
         AllowedDesignation allowedDesignation = new AllowedDesignation("Associate Manager, Software Engineering");
         AllowedDesignation allowedDesignation1 = new AllowedDesignation("Manager, Software Engineering");
 
@@ -143,6 +120,9 @@ public class BootstrapRepo {
         process2.persist();
         process3.persist();
 
+        CustomEvent customEvent = new CustomEvent("PTO", "sick leave", LocalDate.now().toString(), LocalDate.now().plusDays(4).toString(), CustomEventType.PTO, employee1);
+        customEvent.persist();
+        CustomEvent customEvent1 = new CustomEvent("Openshift training", "Mandatory training", LocalDate.now().toString(), LocalDate.now().plusDays(2).toString(), CustomEventType.TRAINING, employee2);
+        customEvent1.persist();
     }
-
 }

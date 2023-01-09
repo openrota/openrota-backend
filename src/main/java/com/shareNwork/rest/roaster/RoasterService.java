@@ -1,27 +1,24 @@
 package com.shareNwork.rest.roaster;
 
-import com.shareNwork.domain.Employee;
-import com.shareNwork.domain.Project;
-import com.shareNwork.domain.ResourceRequest;
-import com.shareNwork.domain.Roaster;
-import com.shareNwork.domain.SharedResource;
-import com.shareNwork.repository.EmployeeRepository;
-import com.shareNwork.repository.ProjectRepository;
-import com.shareNwork.repository.ResourceRequestRepository;
-import com.shareNwork.repository.SharedResourceRepository;
-import org.optaplanner.core.api.score.ScoreManager;
-import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
-import org.optaplanner.core.api.solver.SolverManager;
+import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.GET;
 
-import java.util.List;
+import com.shareNwork.domain.ResourceRequest;
+import com.shareNwork.domain.Roaster;
+import com.shareNwork.domain.SharedResource;
+import com.shareNwork.repository.ResourceRequestRepository;
+import com.shareNwork.repository.SharedResourceRepository;
+import org.optaplanner.core.api.score.ScoreManager;
+import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
+import org.optaplanner.core.api.solver.SolverManager;
 
 @ApplicationScoped
 public class RoasterService {
+
     private SolverManager<Roaster, Integer> solverManager;
     private ScoreManager<Roaster, HardMediumSoftLongScore> scoreManager;
     private SharedResourceRepository employeeRepository;
@@ -35,10 +32,11 @@ public class RoasterService {
         this.employeeRepository = employeeRepository;
         this.resourceRequestRepository = resourceRequestRepository;
     }
+
     @GET
     @Transactional
     public Roaster getRoster() {
-       return buildRoster(12);
+        return buildRoster(12);
     }
 
     @Transactional

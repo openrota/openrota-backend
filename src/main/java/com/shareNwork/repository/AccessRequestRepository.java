@@ -1,5 +1,16 @@
 package com.shareNwork.repository;
 
+import java.text.ParseException;
+import java.util.Map;
+import java.util.Set;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.Response;
+
 import com.shareNwork.domain.AccessRequest;
 import com.shareNwork.domain.EmailData;
 import com.shareNwork.domain.constants.EmailType;
@@ -10,17 +21,6 @@ import com.shareNwork.proxy.MailerProxy;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.Response;
-
-import java.text.ParseException;
-import java.util.Map;
-import java.util.Set;
 
 @ApplicationScoped
 public class AccessRequestRepository implements PanacheRepository<AccessRequest> {
@@ -52,9 +52,9 @@ public class AccessRequestRepository implements PanacheRepository<AccessRequest>
                 request.setStatus(InvitationStatus.REJECTED);
             }
             sendEmail(new EmailData(EmailType.ACCESS_REQ_STATUS.value(),
-                                                request.getEmailId(),
-                                                Map.of("approved",
-                                                       String.valueOf(actionName.equals(RowAction.APPROVE)))));
+                                    request.getEmailId(),
+                                    Map.of("approved",
+                                           String.valueOf(actionName.equals(RowAction.APPROVE)))));
             em.merge(request);
         } else {
             throw new NotFoundException();

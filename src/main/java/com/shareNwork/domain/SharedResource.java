@@ -1,13 +1,18 @@
 package com.shareNwork.domain;
 
-import com.shareNwork.domain.constants.ResourceAvailabilityStatus;
-import com.shareNwork.domain.constants.RoleType;
-import lombok.*;
-
-import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+
+import com.shareNwork.domain.constants.ResourceAvailabilityStatus;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @AllArgsConstructor
@@ -31,8 +36,10 @@ public class SharedResource extends Employee {
     @Getter
     @Setter
     private ResourceAvailabilityStatus status;
+
     public SharedResource() {
     }
+
     public SharedResource(String firstName, String lastName, String employeeId, String emailId, String designation, String totalExperience, ResourceAvailabilityStatus status) {
         super(firstName, lastName, employeeId, emailId, designation);
         this.totalExperience = totalExperience;

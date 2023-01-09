@@ -61,14 +61,14 @@ public class ReminderSchedulersImpl implements ReminderSchedulers {
     private List<EmailData> toEmailData(final List<Invitation> emailIds, final int days) {
         List<EmailData> emailDataList = new ArrayList<>();
         if (!emailIds.isEmpty()) {
-             emailDataList = emailIds.parallelStream()
-                     .map(invitation -> EmailData.builder()
-                             .emailType(EmailType.INVITATION_EXPIRATION.value())
-                             .mailTo(invitation.getEmailId())
-                             .emailTemplateVariables(Map.of("expiresOn", invitation.getCreatedAt()
-                                                           .plusDays(days)
-                                                           .format(DateTimeFormatter.ISO_DATE)))
-                    .build()).collect(Collectors.toList());
+            emailDataList = emailIds.parallelStream()
+                    .map(invitation -> EmailData.builder()
+                            .emailType(EmailType.INVITATION_EXPIRATION.value())
+                            .mailTo(invitation.getEmailId())
+                            .emailTemplateVariables(Map.of("expiresOn", invitation.getCreatedAt()
+                                    .plusDays(days)
+                                    .format(DateTimeFormatter.ISO_DATE)))
+                            .build()).collect(Collectors.toList());
         } else {
             LOGGER.info("EmailData List is Empty for Invitation Expiration Reminder");
         }

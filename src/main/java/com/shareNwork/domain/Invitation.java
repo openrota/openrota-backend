@@ -2,16 +2,16 @@ package com.shareNwork.domain;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+
 import com.shareNwork.domain.constants.InvitationStatus;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
 
 @Entity
 @Data
