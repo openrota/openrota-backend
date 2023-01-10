@@ -16,31 +16,32 @@ import com.shareNwork.domain.constants.EmailType;
 import com.shareNwork.proxy.MailerProxy;
 import com.shareNwork.repository.InvitationRepository;
 import com.shareNwork.repository.ProjectRepository;
-import com.shareNwork.service.ReminderSchedulers;
-import io.quarkus.scheduler.Scheduled;
+import com.shareNwork.service.ReminderService;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
 
 @ApplicationScoped
-public class ReminderSchedulersImpl implements ReminderSchedulers {
+public class ReminderServiceImpl implements ReminderService {
 
-    private static final Logger LOGGER = Logger.getLogger(ReminderSchedulersImpl.class);
-    public static final String CRON_TIME = "* 15 10 * * ?";
+    private static final Logger LOGGER = Logger.getLogger(ReminderServiceImpl.class);
+    private static final int INVITE_EXPIRE_DAYS = 1;
+
 
     @Inject
     InvitationRepository invitationRepository;
-
-    @Inject
-    ProjectRepository projectRepository;
 
     @RestClient
     MailerProxy mailerProxy;
 
     @Override
-    @Scheduled(cron = CRON_TIME)
+    public void callReminders() {
+        invitationExpireReminder();
+    }
+
+    @Override
     public void invitationExpireReminder() {
-        List<Invitation> emailIds = invitationRepository.expiringInvitations(3);
-        List<EmailData> emailDataList = toEmailData(emailIds, 3);
+        List<Invitation> emailIds = invitationRepository.expiringInvitations(INVITE_EXPIRE_DAYS);
+        List<EmailData> emailDataList = toEmailData(emailIds, INVITE_EXPIRE_DAYS);
         LOGGER.info(emailDataList.toString());
         if (!emailDataList.isEmpty()) {
             Response response = mailerProxy.sendMultipleEmail(emailDataList);
@@ -49,12 +50,10 @@ public class ReminderSchedulersImpl implements ReminderSchedulers {
     }
 
     @Override
-//    @Scheduled(cron = CRON_TIME)
     public void projectClosureDueReminder() {
     }
 
     @Override
-//    @Scheduled(cron = CRON_TIME)
     public void ProjectCompletionReminder() {
     }
 
