@@ -1,6 +1,7 @@
 package com.shareNwork.repository;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -16,14 +17,13 @@ public class ProjectExtensionRepository implements PanacheRepository<ProjectExte
 
     @Transactional
     public Project extendProject(ProjectExtension projectExtension) {
-        if (!validateProjectExtensionIsNew(projectExtension)) {
+        if (validateProjectExtensionIsNew(projectExtension)) {
             throw new RuntimeException("Project Extension Request is already pending!");
         }
         Project project = Project.findById(projectExtension.getProject().id);
         projectExtension.setProject(project);
-        persist(projectExtension);
+        projectExtension.persist();
         project.setStatus(ProjectStatus.EXTENSION_REQUESTED);
-        project.persist();
         return project;
     }
 
@@ -34,7 +34,7 @@ public class ProjectExtensionRepository implements PanacheRepository<ProjectExte
             throw new RuntimeException("Project Extension not found!");
         }
         projectExtensionToUpdate.setStatus(projectExtension.getStatus());
-        Project project = Project.findById(projectExtension.getProject().id);
+        Project project = projectExtensionToUpdate.getProject();
         if (ProjectStatus.EXTENSION_APPROVED.equals(projectExtension.getStatus())) {
             project.setEndDate(projectExtension.getExtendedDate());
             project.setStatus(ProjectStatus.INPROGRESS);
@@ -49,7 +49,7 @@ public class ProjectExtensionRepository implements PanacheRepository<ProjectExte
     }
 
     private boolean validateProjectExtensionIsNew(ProjectExtension projectExtension) {
-        return listAll().stream().filter(p -> p.getProject().id == projectExtension.getProject().id
-                && ProjectStatus.EXTENSION_REQUESTED.equals(p.getStatus())).collect(Collectors.toList()).isEmpty();
+        return list("status", ProjectStatus.EXTENSION_REQUESTED).stream()
+                .anyMatch(p -> Objects.equals(p.getProject().id, projectExtension.getProject().id));
     }
 }
