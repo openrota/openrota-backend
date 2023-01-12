@@ -4,15 +4,11 @@ import com.shareNwork.domain.EmailData;
 import com.shareNwork.domain.Project;
 import com.shareNwork.domain.ProjectExtension;
 import com.shareNwork.domain.ProjectFeedback;
-import com.shareNwork.domain.ProjectSkillsProficiency;
 import com.shareNwork.domain.constants.EmailType;
 import com.shareNwork.domain.constants.ProjectStatus;
-import com.shareNwork.domain.constants.ResourceRequestStatus;
 import com.shareNwork.proxy.MailerProxy;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
-import io.quarkus.mailer.Mail;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
-import io.quarkus.panache.common.Sort;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -24,7 +20,6 @@ import javax.ws.rs.core.Response;
 
 import java.text.ParseException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -56,7 +51,6 @@ public class ProjectRepository implements PanacheRepository<Project> {
         return listAll().stream().filter(project -> project.getProjectManager() != null && project.getProjectManager().id  == id).collect(Collectors.toList());
     }
 
-
     @Transactional
     public Project completeProject(long projectId, String comments) throws ParseException {
         Project project = findById(projectId);
@@ -83,8 +77,9 @@ public class ProjectRepository implements PanacheRepository<Project> {
 
     @Transactional
     public Project extendProject(ProjectExtension projectExtension) {
+        Project project = findById(projectExtension.getProject().id);
+        projectExtension.setProject(project);
         ProjectExtension.persist(projectExtension);
-        Project project = projectExtension.getProject();
         project.setStatus(ProjectStatus.EXTENSION_REQUESTED);
         persist(project);
         return project;

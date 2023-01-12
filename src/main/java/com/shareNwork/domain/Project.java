@@ -19,10 +19,8 @@ import java.util.Set;
 @Data
 public class Project extends PanacheEntity {
 
-    @NotNull
     private String projectName;
 
-    @NotNull
     private String businessUnit;
 
     @OneToOne
@@ -38,7 +36,7 @@ public class Project extends PanacheEntity {
 
     private LocalDateTime createdAt;
 
-    private LocalDateTime endDate;
+    private String endDate;
 
     @ManyToOne
     SharedResource employee;
