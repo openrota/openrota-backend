@@ -1,15 +1,19 @@
 package com.shareNwork.domain;
 
+import java.util.Set;
+
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.Set;
 @Entity
 @Data
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -31,8 +35,10 @@ public class Employee extends PanacheEntity {
             joinColumns = @JoinColumn(name = "employeeId", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "roleId", referencedColumnName = "id"))
     private Set<Role> roles;
+
     public Employee() {
     }
+
     public Employee(String firstName, String lastName, String employeeId, String emailId, String designation) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -40,6 +46,5 @@ public class Employee extends PanacheEntity {
         this.emailId = emailId;
         this.designation = designation;
     }
-
 }
 

@@ -1,5 +1,7 @@
 package com.shareNwork.resource;
 
+import java.util.List;
+
 import com.shareNwork.domain.Invitation;
 import com.shareNwork.domain.InvitationResponse;
 import com.shareNwork.repository.InvitationRepository;
@@ -8,8 +10,6 @@ import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.GraphQLApi;
 import org.eclipse.microprofile.graphql.Mutation;
 import org.eclipse.microprofile.graphql.Query;
-
-import java.util.List;
 
 @AllArgsConstructor
 @GraphQLApi

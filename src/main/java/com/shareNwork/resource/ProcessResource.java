@@ -1,18 +1,23 @@
 package com.shareNwork.resource;
 
+import java.text.ParseException;
+import java.util.List;
+
 import com.shareNwork.domain.processEngine.Process;
 import com.shareNwork.domain.processEngine.ProcessAction;
 import com.shareNwork.repository.ProcessRepository;
 import com.shareNwork.service.Processhandler;
 import lombok.AllArgsConstructor;
-import org.eclipse.microprofile.graphql.*;
-
-import java.text.ParseException;
-import java.util.List;
+import org.eclipse.microprofile.graphql.Description;
+import org.eclipse.microprofile.graphql.GraphQLApi;
+import org.eclipse.microprofile.graphql.Mutation;
+import org.eclipse.microprofile.graphql.Name;
+import org.eclipse.microprofile.graphql.Query;
 
 @AllArgsConstructor
 @GraphQLApi
 public class ProcessResource {
+
     private ProcessRepository processRepository;
     private Processhandler processhandler;
 

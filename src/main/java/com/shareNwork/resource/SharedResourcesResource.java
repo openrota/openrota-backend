@@ -1,15 +1,20 @@
 package com.shareNwork.resource;
 
+import java.text.ParseException;
+import java.util.List;
+
+import javax.transaction.Transactional;
+
 import com.shareNwork.domain.Employee;
 import com.shareNwork.domain.EmployeeSkillProficiency;
 import com.shareNwork.domain.filters.EmployeeFilter;
 import com.shareNwork.repository.SharedResourceRepository;
 import lombok.AllArgsConstructor;
-import org.eclipse.microprofile.graphql.*;
-
-import javax.transaction.Transactional;
-import java.text.ParseException;
-import java.util.List;
+import org.eclipse.microprofile.graphql.Description;
+import org.eclipse.microprofile.graphql.GraphQLApi;
+import org.eclipse.microprofile.graphql.Mutation;
+import org.eclipse.microprofile.graphql.Name;
+import org.eclipse.microprofile.graphql.Query;
 
 @AllArgsConstructor
 @GraphQLApi
@@ -71,5 +76,4 @@ public class SharedResourcesResource {
     public com.shareNwork.domain.SharedResource deleteSharedResource(Long id) throws ParseException {
         return this.sharedResourceRepository.deleteSharedResource(id);
     }
-
 }

@@ -25,6 +25,7 @@ import org.jboss.logging.Logger;
 
 @ApplicationScoped
 public class ProjectRepository implements PanacheRepository<Project> {
+
     private static final Logger LOGGER = Logger.getLogger(ProjectRepository.class);
 
     @Inject
@@ -44,10 +45,11 @@ public class ProjectRepository implements PanacheRepository<Project> {
     }
 
     public List<Project> getProjectsByResource(long id) {
-      return listAll().stream().filter(project -> project.getEmployee() != null && project.getEmployee().id  == id).collect(Collectors.toList());
+        return listAll().stream().filter(project -> project.getEmployee() != null && project.getEmployee().id == id).collect(Collectors.toList());
     }
+
     public List<Project> getProjectsByRequestor(long id) {
-        return listAll().stream().filter(project -> project.getProjectManager() != null && project.getProjectManager().id  == id).collect(Collectors.toList());
+        return listAll().stream().filter(project -> project.getProjectManager() != null && project.getProjectManager().id == id).collect(Collectors.toList());
     }
 
     @Transactional
@@ -63,12 +65,11 @@ public class ProjectRepository implements PanacheRepository<Project> {
             projectFeedback.persist();
             em.merge(project);
             Response response = mailerProxy.sendEmail(EmailData.builder()
-                                          .emailType(EmailType.PROJECT_COMPLETED.value())
-                                          .mailTo(project.getProjectManager().getEmailId())
-                                          .emailTemplateVariables(Map.of("projectId", String.valueOf(projectId))).build());
+                                                              .emailType(EmailType.PROJECT_COMPLETED.value())
+                                                              .mailTo(project.getProjectManager().getEmailId())
+                                                              .emailTemplateVariables(Map.of("projectId", String.valueOf(projectId))).build());
             LOGGER.info("openrota-mailer-service:" + response.getStatusInfo());
-        }
-        else {
+        } else {
             throw new NotFoundException();
         }
         return project;

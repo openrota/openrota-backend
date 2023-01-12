@@ -1,21 +1,18 @@
 package com.shareNwork.resource;
 
+import java.text.ParseException;
+import java.util.List;
+
+import javax.transaction.Transactional;
+
 import com.shareNwork.domain.ResourceRequest;
-import com.shareNwork.domain.ResourceRequestSkillsProficiency;
-import com.shareNwork.domain.SharedResource;
 import com.shareNwork.domain.constants.RowAction;
 import com.shareNwork.repository.ResourceRequestRepository;
-import com.shareNwork.repository.SharedResourceRepository;
 import lombok.AllArgsConstructor;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.GraphQLApi;
 import org.eclipse.microprofile.graphql.Mutation;
 import org.eclipse.microprofile.graphql.Query;
-
-import javax.transaction.Transactional;
-import java.text.ParseException;
-import java.util.List;
-import java.util.Set;
 
 @AllArgsConstructor
 @GraphQLApi
@@ -55,5 +52,4 @@ public class SRRequestResource {
     public com.shareNwork.domain.ResourceRequest handleResourceRequestActions(RowAction action, ResourceRequest resourceRequest) throws ParseException {
         return this.resourceRequestRepository.handleActions(action, resourceRequest);
     }
-
 }

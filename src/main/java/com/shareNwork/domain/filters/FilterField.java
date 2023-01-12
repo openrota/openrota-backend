@@ -1,14 +1,14 @@
 package com.shareNwork.domain.filters;
 
-
-import lombok.Data;
-
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 
+import lombok.Data;
+
 @Data
 public class FilterField {
+
     private String operator;
     private String value;
 

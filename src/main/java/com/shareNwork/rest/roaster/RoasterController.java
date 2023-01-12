@@ -20,7 +20,7 @@ public class RoasterController {
 
     @GET
     public Roaster getRoster() {
-       return rosterService.getRoster();
+        return rosterService.getRoster();
     }
 
     @GET

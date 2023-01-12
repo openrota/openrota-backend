@@ -1,6 +1,8 @@
 package com.shareNwork.service;
 
-public interface ReminderSchedulers {
+public interface ReminderService {
+
+    void callReminders();
 
     void invitationExpireReminder();
 

@@ -13,6 +13,7 @@ public enum EmailType {
     PROJECT_COMPLETED("projectCompleted");
 
     private final String value;
+
     EmailType(String value) {
         this.value = value;
     }

@@ -37,7 +37,6 @@ public class ProjectResource {
         return this.projectRepository.getProjectsByResource(id);
     }
 
-
     @Query("getProjectById")
     @Description("Get project by id")
     @Transactional
@@ -51,6 +50,7 @@ public class ProjectResource {
 
         return this.projectRepository.createOrUpdateProject(project);
     }
+
     @Mutation
     @Description("complete project")
     public com.shareNwork.domain.Project completeProject(long projectId, String comments) throws ParseException {

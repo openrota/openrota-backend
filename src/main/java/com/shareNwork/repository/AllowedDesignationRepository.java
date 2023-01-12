@@ -1,6 +1,5 @@
 package com.shareNwork.repository;
 
-import java.text.ParseException;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -24,7 +23,7 @@ public class AllowedDesignationRepository implements PanacheRepository<Employee>
         List<AllowedDesignation> allowedDesignationList = AllowedDesignation.listAll();
         AllowedDesignationResponse allowedDesignationResponse = new AllowedDesignationResponse();
         allowedDesignationResponse.setDesignationName(designation);
-        for ( AllowedDesignation allowedDesignation: allowedDesignationList) {
+        for (AllowedDesignation allowedDesignation : allowedDesignationList) {
             if (allowedDesignation.getName().equals(designation)) {
                 allowedDesignationResponse.setIsgranted(true);
 
@@ -34,5 +33,4 @@ public class AllowedDesignationRepository implements PanacheRepository<Employee>
         allowedDesignationResponse.setIsgranted(false);
         return allowedDesignationResponse;
     }
-
 }

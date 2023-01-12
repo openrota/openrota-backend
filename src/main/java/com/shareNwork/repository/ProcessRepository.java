@@ -1,20 +1,22 @@
 package com.shareNwork.repository;
 
-import com.shareNwork.domain.processEngine.Process;
-import com.shareNwork.domain.processEngine.ProcessAction;
-import com.shareNwork.domain.processEngine.ProcessField;
-import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import java.text.ParseException;
+import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.ws.rs.NotFoundException;
-import java.text.ParseException;
-import java.util.List;
+
+import com.shareNwork.domain.processEngine.Process;
+import com.shareNwork.domain.processEngine.ProcessAction;
+import com.shareNwork.domain.processEngine.ProcessField;
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
 
 @ApplicationScoped
 public class ProcessRepository implements PanacheRepository<Process> {
+
     @Inject
     EntityManager em;
 
@@ -22,10 +24,10 @@ public class ProcessRepository implements PanacheRepository<Process> {
     public Process updateOrCreate(Process process) throws ParseException {
         if (process.id == null) {
             persist(process);
-            if(process.getProcessActions() != null) {
+            if (process.getProcessActions() != null) {
                 addActionsToProcess(process.id, process.getProcessActions());
             }
-            if(process.getProcessFields() != null) {
+            if (process.getProcessFields() != null) {
                 addFieldsToProcess(process.id, process.getProcessFields());
             }
             return process;
@@ -41,8 +43,8 @@ public class ProcessRepository implements PanacheRepository<Process> {
         if (employee == null) {
             throw new NotFoundException();
         } else {
-            for (ProcessAction employeeSkillProficiency: processActions) {
-                if (employeeSkillProficiency.id != null ) {
+            for (ProcessAction employeeSkillProficiency : processActions) {
+                if (employeeSkillProficiency.id != null) {
                     updateProcessActions(employeeSkillProficiency.id, employeeSkillProficiency);
                 } else {
                     employeeSkillProficiency.setProcess(employee);
@@ -73,8 +75,8 @@ public class ProcessRepository implements PanacheRepository<Process> {
         if (employee == null) {
             throw new NotFoundException();
         } else {
-            for (ProcessField employeeSkillProficiency: processActions) {
-                if (employeeSkillProficiency.id != null ) {
+            for (ProcessField employeeSkillProficiency : processActions) {
+                if (employeeSkillProficiency.id != null) {
                     updateProcessFields(employeeSkillProficiency.id, employeeSkillProficiency);
                 } else {
                     employeeSkillProficiency.setProcess(employee);
@@ -100,5 +102,4 @@ public class ProcessRepository implements PanacheRepository<Process> {
         employeeSkillProficiency1.persist();
         return employeeSkillProficiency1;
     }
-
 }

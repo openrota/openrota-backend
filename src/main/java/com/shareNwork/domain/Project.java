@@ -1,19 +1,20 @@
 package com.shareNwork.domain;
 
+import java.time.LocalDateTime;
+import java.util.Set;
+
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
+
 import com.shareNwork.domain.constants.ProjectStatus;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.optaplanner.core.api.domain.entity.PlanningEntity;
-import org.optaplanner.core.api.domain.variable.PlanningVariable;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 @Data
@@ -50,13 +51,14 @@ public class Project extends PanacheEntity {
     @Getter
     @Setter
     Set<String> skillSet;
+
     public Project() {
     }
+
     public Project(String projectName, String businessUnit, ResourceRequest resourcerequest) {
-        this.projectName=projectName;
-        this.businessUnit=businessUnit;
-        this.resourcerequest=resourcerequest;
+        this.projectName = projectName;
+        this.businessUnit = businessUnit;
+        this.resourcerequest = resourcerequest;
 //        this.createdAt=createdAt;
     }
-
 }
