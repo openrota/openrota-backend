@@ -1,15 +1,10 @@
 package com.shareNwork.repository;
 
-import com.shareNwork.domain.EmailData;
-import com.shareNwork.domain.Project;
-import com.shareNwork.domain.ProjectExtension;
-import com.shareNwork.domain.ProjectFeedback;
-import com.shareNwork.domain.constants.EmailType;
-import com.shareNwork.domain.constants.ProjectStatus;
-import com.shareNwork.proxy.MailerProxy;
-import io.quarkus.hibernate.orm.panache.PanacheRepository;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
-import org.jboss.logging.Logger;
+import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -18,11 +13,15 @@ import javax.transaction.Transactional;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
-import java.text.ParseException;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import com.shareNwork.domain.EmailData;
+import com.shareNwork.domain.Project;
+import com.shareNwork.domain.ProjectFeedback;
+import com.shareNwork.domain.constants.EmailType;
+import com.shareNwork.domain.constants.ProjectStatus;
+import com.shareNwork.proxy.MailerProxy;
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.jboss.logging.Logger;
 
 @ApplicationScoped
 public class ProjectRepository implements PanacheRepository<Project> {
@@ -72,30 +71,6 @@ public class ProjectRepository implements PanacheRepository<Project> {
         else {
             throw new NotFoundException();
         }
-        return project;
-    }
-
-    @Transactional
-    public Project extendProject(ProjectExtension projectExtension) {
-        Project project = findById(projectExtension.getProject().id);
-        projectExtension.setProject(project);
-        ProjectExtension.persist(projectExtension);
-        project.setStatus(ProjectStatus.EXTENSION_REQUESTED);
-        persist(project);
-        return project;
-    }
-
-    @Transactional
-    public Project updateProjectExtension(ProjectExtension projectExtension) {
-        ProjectExtension.persist(projectExtension);
-        Project project = projectExtension.getProject();
-        if (ProjectStatus.EXTENSION_APPROVED.equals(projectExtension.getStatus())) {
-            project.setEndDate(projectExtension.getExtendedDate());
-            project.setStatus(ProjectStatus.INPROGRESS);
-        } else if (ProjectStatus.EXTENSION_DENIED.equals(projectExtension.getStatus())) {
-            project.setStatus(ProjectStatus.INPROGRESS);
-        }
-        persist(project);
         return project;
     }
 }
