@@ -15,5 +15,5 @@ public class EmailData {
 
     private String emailType;
     private String mailTo;
-    private Map<String, String> emailTemplateVariables;
+    private Map<String, Object> emailTemplateVariables;
 }

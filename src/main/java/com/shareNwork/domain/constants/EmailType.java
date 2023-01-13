@@ -10,7 +10,9 @@ public enum EmailType {
     RESOURCE_REQUEST_STATUS("resourceRequestStatus"),
     PROJECT_CLOSURE_DUE_REMINDER("projectClosureDueReminder"),
     PROJECT_CLOSURE_REMINDER("projectClosureReminder"),
-    PROJECT_COMPLETED("projectCompleted");
+    PROJECT_COMPLETED("projectCompleted"),
+    PROJECT_EXTENSION_REQ("projectExtensionReq"),
+    PROJECT_EXTENSION_REQ_STATUS("projectExtensionReqStatus");
 
     private final String value;
 
