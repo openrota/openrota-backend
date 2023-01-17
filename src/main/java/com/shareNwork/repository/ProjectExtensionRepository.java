@@ -63,11 +63,11 @@ public class ProjectExtensionRepository implements PanacheRepository<ProjectExte
         EmailData emailData = EmailData.builder().emailType(EmailType.PROJECT_EXTENSION_REQ_STATUS.value())
                 .mailTo(project.getProjectManager().getEmailId()).build();
         if (ProjectStatus.EXTENSION_APPROVED.equals(projectExtension.getStatus())) {
-            project.setEndDate(projectExtension.getExtendedDate());
+            project.getSlot().setEndDate(projectExtensionToUpdate.getExtendedDate());
             project.setStatus(ProjectStatus.INPROGRESS);
             emailData.setEmailTemplateVariables(Map.of("requestId", projectExtension.id,
                                                        "projectName", project.getProjectName(),
-                                                       "endDate", project.getEndDate(),
+                                                       "endDate", project.getSlot().getEndDate(),
                                                        "approved", "true"));
         } else if (ProjectStatus.EXTENSION_DENIED.equals(projectExtension.getStatus())) {
             project.setStatus(ProjectStatus.INPROGRESS);
