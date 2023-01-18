@@ -1,7 +1,9 @@
 package com.shareNwork.repository;
 
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -20,6 +22,7 @@ import com.shareNwork.domain.constants.EmailType;
 import com.shareNwork.domain.constants.ProjectStatus;
 import com.shareNwork.proxy.MailerProxy;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import io.quarkus.scheduler.Scheduled;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
 
@@ -73,5 +76,17 @@ public class ProjectRepository implements PanacheRepository<Project> {
             throw new NotFoundException();
         }
         return project;
+    }
+
+    // TODO: 18/01/23 Later we can add an API to call this method, using Infrastructure CronJob 
+    @Scheduled(every = "1h")
+    @Transactional
+    public void updateProjectStatus() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        list("status", ProjectStatus.YET_TO_START).forEach(project -> {
+            if (LocalDate.now().isEqual(LocalDate.parse(project.getSlot().getStartDate(), formatter))) {
+                project.setStatus(ProjectStatus.INPROGRESS);
+                em.merge(project);
+            }});
     }
 }
