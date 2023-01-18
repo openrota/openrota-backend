@@ -9,6 +9,7 @@ import javax.transaction.Transactional;
 
 import com.shareNwork.domain.CustomEvent;
 import com.shareNwork.domain.constants.CustomEventType;
+import com.shareNwork.repository.CustomEventRepository;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.GraphQLApi;
 import org.eclipse.microprofile.graphql.Mutation;
@@ -18,12 +19,18 @@ import org.eclipse.microprofile.graphql.Query;
 public class CustomEventResource {
 
     @Inject
-    EntityManager entityManager;
+    CustomEventRepository customEventRepository;
 
     @Query("event")
     @Description("Get all events")
     public List<CustomEvent> findAllEvents() {
         return CustomEvent.listAll();
+    }
+
+    @Query("eventsByResource")
+    @Description("Get events by resource")
+    public List<CustomEvent> findEventsByResource(long id) {
+        return customEventRepository.getEventsByResource(id);
     }
 
     @Query("eventTypes")
@@ -36,13 +43,7 @@ public class CustomEventResource {
     @Description("Create or Update Events")
     @Transactional
     public CustomEvent createOrUpdateEvent(CustomEvent customEvent) throws ParseException {
-
-        if (customEvent.id != null) {
-            entityManager.merge(customEvent);
-        } else {
-            customEvent.persist();
-        }
-        return customEvent;
+        return  customEventRepository.createOrUpdateEvents(customEvent);
     }
 
     @Mutation
