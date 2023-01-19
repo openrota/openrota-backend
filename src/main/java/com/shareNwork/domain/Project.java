@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.validation.constraints.NotNull;
 
 import com.shareNwork.domain.constants.ProjectStatus;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
@@ -20,10 +19,8 @@ import lombok.Setter;
 @Data
 public class Project extends PanacheEntity {
 
-    @NotNull
     private String projectName;
 
-    @NotNull
     private String businessUnit;
 
     @OneToOne
@@ -55,10 +52,12 @@ public class Project extends PanacheEntity {
     public Project() {
     }
 
-    public Project(String projectName, String businessUnit, ResourceRequest resourcerequest) {
+    public Project(String projectName, String businessUnit, ResourceRequest resourceRequest, Slot slot, ProjectStatus status) {
         this.projectName = projectName;
+        this.status = status;
         this.businessUnit = businessUnit;
-        this.resourcerequest = resourcerequest;
+        this.resourcerequest = resourceRequest;
+        this.slot = slot;
 //        this.createdAt=createdAt;
     }
 }
