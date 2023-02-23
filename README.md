@@ -12,8 +12,9 @@ This project is aimed to quickly test the stack :
 
 ## Clone & build
 
+- The project uses Java 11 and Maven 3.8.6+. Make sure you have these installed before building the project.
 - Tests are executed on an H2 database
-- Simply run command `mvn clean install`
+- Simply run command `mvn clean install` on root folder after cloning.
 
 ## Run it
 
